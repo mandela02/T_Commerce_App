@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:t_commerce_app/application/widget/home/home_widget.dart';
+import 'package:t_commerce_app/application/widget/loading/loading_widget.dart';
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomeWidget(),
+      home: LoadingWidget(),
     );
   }
 }
