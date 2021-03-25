@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:t_commerce_app/application/widget/loading_widget.dart';
+import 'package:t_commerce_app/application/widget/loading/loading_widget.dart';
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
