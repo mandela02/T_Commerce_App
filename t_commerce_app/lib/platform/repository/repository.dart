@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:t_commerce_app/domain/model/model_type.dart';
-import 'package:t_commerce_app/platform/repository/configuration.dart';
+import 'package:t_commerce_app/platform/database/configuration.dart';
 
 abstract class RepositoryType<T extends ModelType> {
   Future<List<Map<String, dynamic>>> getAll(String table);

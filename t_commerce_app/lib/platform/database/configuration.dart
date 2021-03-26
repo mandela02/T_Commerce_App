@@ -1,23 +1,24 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:t_commerce_app/domain/model/category.dart';
+
+abstract class TableName {
+  static String databaseName = "store_database.db";
+  static String categoryTableName = "category";
+  static String productTableName = "product";
+  static String categoryOfProductTableName = "category_of_product";
+}
 
 class Configuration {
   static final Configuration share = Configuration._();
 
   late final Future<Database> database;
 
-  String _databaseName = "store_database.db";
-  String _categoryTableName = "category";
-  String _productTableName = "product";
-  String _categoryOfProductTableName = "category_of_product";
-
   Configuration._() {
     database = openAppDatabase();
   }
 
   Future<Database> openAppDatabase() async {
-    return openDatabase(join(await getDatabasesPath(), _databaseName),
+    return openDatabase(join(await getDatabasesPath(), TableName.databaseName),
         onCreate: (db, version) {
       _createTable(db, version);
     }, version: 1);
@@ -25,14 +26,14 @@ class Configuration {
 
   void _createTable(Database db, int newVersion) async {
     String createCategoryTable = """
-        CREATE TABLE $_categoryTableName(
+        CREATE TABLE ${TableName.categoryTableName} (
         id TEXT PRIMARY KEY, 
         name TEXT
         )
         """;
 
     String createProductTable = """
-        CREATE TABLE $_productTableName(
+        CREATE TABLE ${TableName.productTableName}(
         id TEXT PRIMARY KEY, 
         name TEXT, 
         originalPrice INTEGER, 
@@ -45,7 +46,7 @@ class Configuration {
         """;
 
     String createCategoryOfProductTable = """
-        CREATE TABLE $_categoryOfProductTableName(
+        CREATE TABLE ${TableName.categoryOfProductTableName}(
         id TEXT PRIMARY KEY, 
         categoryId TEXT, 
         productId TEXT
@@ -58,14 +59,5 @@ class Configuration {
     batch.execute(createCategoryOfProductTable);
 
     await batch.commit();
-  }
-
-  Future<void> insertCategory(Category category) async {
-    final Database db = await database;
-    await db.insert(
-      _categoryTableName,
-      category.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
   }
 }
