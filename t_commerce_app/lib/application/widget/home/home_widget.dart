@@ -11,22 +11,22 @@ class HomeWidget extends StatefulWidget {
 
 class _HomeWidgetState extends State<HomeWidget> {
   List<SideMenuItem> _managementItems = [
-    SideMenuItem("Order", Colors.red, () => OrderWidget()),
-    SideMenuItem("Product", Colors.red, () => ProductsWidget())
+    SideMenuItem(title: "Order", color: Colors.red, content: OrderWidget()),
+    SideMenuItem(
+        title: "Product", color: Colors.blue, content: ProductsWidget()),
   ];
 
   List<SideMenuItem> _settingsItems = [
-    SideMenuItem("Settings", Colors.red, () => SettingsWidget()),
+    SideMenuItem(
+        title: "Settings", color: Colors.deepPurple, content: SettingsWidget()),
   ];
 
-  SideMenuItem _selectedMenuItem;
-  String _title;
+  late SideMenuItem _selectedMenuItem;
 
   @override
   void initState() {
     super.initState();
     _selectedMenuItem = _managementItems.first;
-    _title = _selectedMenuItem.title;
   }
 
   @override
@@ -34,10 +34,10 @@ class _HomeWidgetState extends State<HomeWidget> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.blue[900],
+        backgroundColor: _selectedMenuItem.color,
         elevation: 0,
         title: Text(
-          _title,
+          _selectedMenuItem.title,
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -53,6 +53,9 @@ class _HomeWidgetState extends State<HomeWidget> {
             padding: EdgeInsets.zero,
             children: [
               UserAccountsDrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.indigo,
+                ),
                 accountName: Text("HaniPla"),
                 accountEmail: Text("10khongquang@gmail.com"),
                 currentAccountPicture: new CircleAvatar(
@@ -84,7 +87,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  Widget getCell(BuildContext context, {SideMenuItem item}) {
+  Widget getCell(BuildContext context, {required SideMenuItem item}) {
     return Container(
       decoration: BoxDecoration(
         color: item == _selectedMenuItem ? Colors.grey[300] : Colors.white,
@@ -119,14 +122,13 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  void onMenuClick({SideMenuItem item}) {
+  void onMenuClick({required SideMenuItem item}) {
     setState(() {
       _selectedMenuItem = item;
-      _title = item.title;
     });
   }
 
   Widget _getMenuItemWidget(SideMenuItem menuItem) {
-    return menuItem.func();
+    return menuItem.content;
   }
 }

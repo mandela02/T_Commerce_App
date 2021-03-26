@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class SideMenuItem {
   String title;
   Color color;
-  Function func;
+  Widget content;
 
-  SideMenuItem(this.title, this.color, this.func);
+  SideMenuItem(
+      {required this.title, required this.color, required this.content});
 }
