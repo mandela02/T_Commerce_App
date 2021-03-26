@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_commerce_app/application/widget/category_list/notifier_category_list_widget.dart';
 import 'package:t_commerce_app/application/widget/orders/orders_widget.dart';
 import 'package:t_commerce_app/application/widget/product/products_widget.dart';
 import 'package:t_commerce_app/application/widget/settings/settings_widget.dart';
@@ -14,6 +15,10 @@ class _HomeWidgetState extends State<HomeWidget> {
     SideMenuItem(title: "Order", color: Colors.red, content: OrderWidget()),
     SideMenuItem(
         title: "Product", color: Colors.blue, content: ProductsWidget()),
+    SideMenuItem(
+        title: "Category",
+        color: Colors.pink,
+        content: NotifierCategoryListWidget()),
   ];
 
   List<SideMenuItem> _settingsItems = [

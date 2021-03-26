@@ -1,25 +1,50 @@
-class Product {
-  final int id;
-  final String name;
+import 'package:t_commerce_app/domain/model/model_type.dart';
+import 'package:uuid/uuid.dart';
 
-  final int originalPrice;
-  final int discoutPrice;
+class Product implements ModelType {
+  String id = Uuid().v4();
+  String name = "";
 
-  final int createDate;
-  final int updateDate;
-  final String barCode;
+  int originalPrice = 0;
+  int discountPrice = 0;
 
-  final String description;
-  final int catalogue;
+  int createDate = 0;
+  int updateDate = 0;
+  String barCode = "";
 
-  Product(
-      this.id,
-      this.name,
-      this.originalPrice,
-      this.discoutPrice,
-      this.createDate,
-      this.updateDate,
-      this.barCode,
-      this.description,
-      this.catalogue);
+  String description = "";
+
+  Product(this.id,
+      {required this.name,
+      required this.originalPrice,
+      required this.discountPrice,
+      required this.createDate,
+      required this.updateDate,
+      required this.barCode,
+      required this.description});
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      "id": id,
+      "name": name,
+      "originalPrice": originalPrice,
+      "discountPrice": discountPrice,
+      "createDate": createDate,
+      "updateDate": updateDate,
+      "barCode": barCode,
+      "description": description,
+    };
+  }
+
+  static Product fromMap(Map<String, dynamic> map) {
+    return Product(map["id"],
+        name: map["name"],
+        originalPrice: map["originalPrice"],
+        discountPrice: map["discountPrice"],
+        createDate: map["createDate"],
+        updateDate: map["updateDate"],
+        barCode: map["barCode"],
+        description: map["description"]);
+  }
 }
