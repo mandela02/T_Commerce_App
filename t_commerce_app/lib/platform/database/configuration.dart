@@ -41,7 +41,7 @@ class Configuration {
         createDate INTEGER, 
         updateDate INTEGER, 
         String TEXT, 
-        name TEXT 
+        description TEXT 
         )
         """;
 
