@@ -10,6 +10,8 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   late TextEditingController? _nameTextController;
   late TextEditingController? _descriptionTextController;
 
+  double _commonFontSize = 12;
+
   @override
   void initState() {
     super.initState();
@@ -50,7 +52,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
           Text(
             "Name *",
             style: TextStyle(
-              fontSize: 20,
+              fontSize: _commonFontSize,
             ),
           ),
           SizedBox(
@@ -62,6 +64,9 @@ class _CategoryWidgetState extends State<CategoryWidget> {
               placeholder: "Enter product name",
               controller: _nameTextController,
               textAlignVertical: TextAlignVertical.center,
+              style: TextStyle(
+                fontSize: _commonFontSize,
+              ),
             ),
           ),
         ],
@@ -76,7 +81,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
         Text(
           "Description",
           style: TextStyle(
-            fontSize: 20,
+            fontSize: _commonFontSize,
           ),
           textAlign: TextAlign.start,
         ),
@@ -91,8 +96,26 @@ class _CategoryWidgetState extends State<CategoryWidget> {
               placeholder: "Enter description",
               maxLines: null,
               textAlignVertical: TextAlignVertical.top,
+              style: TextStyle(
+                fontSize: _commonFontSize,
+              ),
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget get listOfProducts {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          "Products in this category: 0 product",
+          style: TextStyle(
+            fontSize: _commonFontSize,
+          ),
+          textAlign: TextAlign.start,
         ),
       ],
     );
@@ -103,8 +126,11 @@ class _CategoryWidgetState extends State<CategoryWidget> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.red,
-        title: Text("category"),
-        actions: [deleteButton],
+        title: Text("Category"),
+        actions: [
+          deleteButton,
+        ],
+        elevation: 0,
       ),
       body: GestureDetector(
         onTap: () {
@@ -113,18 +139,61 @@ class _CategoryWidgetState extends State<CategoryWidget> {
             currentFocus.unfocus();
           }
         },
-        child: Container(
-          color: Colors.white,
-          height: double.infinity,
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              headerField,
-              SizedBox(
-                height: 10,
+        child: SafeArea(
+          child: Container(
+            color: Colors.white,
+            height: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Scrollbar(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        headerField,
+                        SizedBox(
+                          height: 10,
+                        ),
+                        descriptionField,
+                        SizedBox(
+                          height: 10,
+                        ),
+                        listOfProducts,
+                      ],
+                    ),
+                  ),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 40),
+                        child: Text(
+                          "Save",
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(1000.0),
+                          ),
+                        ),
+                        elevation: MaterialStateProperty.all<double>(0),
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.blue),
+                      ),
+                    ),
+                  )
+                ],
               ),
-              descriptionField,
-            ],
+            ),
           ),
         ),
       ),

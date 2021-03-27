@@ -28,7 +28,8 @@ class Configuration {
     String createCategoryTable = """
         CREATE TABLE ${TableName.categoryTableName} (
         id TEXT PRIMARY KEY, 
-        name TEXT
+        name TEXT, 
+        description TEXT
         )
         """;
 
