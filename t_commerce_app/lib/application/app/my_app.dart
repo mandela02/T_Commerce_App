@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/application/widget/loading/loading_widget.dart';
 
 class MyApp extends StatelessWidget {
@@ -10,6 +11,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      onGenerateRoute: AppRouter.generateRoute,
       home: LoadingWidget(),
     );
   }

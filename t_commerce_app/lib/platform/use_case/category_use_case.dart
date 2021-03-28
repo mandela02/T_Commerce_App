@@ -7,20 +7,19 @@ class CategoryUseCase implements CategoryUseCaseType {
   Repository<Category> _repository = Repository();
 
   @override
-  Future<List<Category>> getAllCategory() async {
-    List<Map<String, dynamic>> maps =
-        await _repository.getAll(TableName.categoryTableName);
-    return maps.map((e) => Category.fromMap(e)).toList();
-  }
-
-  @override
   Future<void> add(Category category) {
     return _repository.insert(category, TableName.categoryTableName);
   }
 
   @override
-  Future<void> delete(Category category) async {
-    // TODO: implement delete
+  Future<void> remove(Category category) {
     return _repository.delete("id", category.id, TableName.categoryTableName);
+  }
+
+  @override
+  Future<void> update(Category category) {
+    // TODO: implement update
+    return _repository.update(
+        category, "id", category.id, TableName.categoryTableName);
   }
 }

@@ -28,7 +28,9 @@ class Configuration {
     String createCategoryTable = """
         CREATE TABLE ${TableName.categoryTableName} (
         id TEXT PRIMARY KEY, 
-        name TEXT
+        name TEXT, 
+        description TEXT, 
+        image BLOB
         )
         """;
 
@@ -41,7 +43,7 @@ class Configuration {
         createDate INTEGER, 
         updateDate INTEGER, 
         String TEXT, 
-        name TEXT 
+        description TEXT 
         )
         """;
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/application/widget/category_list/category_list_view_model.dart';
 import 'package:t_commerce_app/domain/model/category.dart';
 
@@ -12,12 +13,12 @@ class _CategoryListWidgetState extends State<CategoryListWidget> {
   @override
   void initState() {
     super.initState();
-    context.read<CategoryListViewModel>().getData();
   }
 
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<CategoryListViewModel>();
+    viewModel.getData();
     final categories = viewModel.categories;
 
     return Scrollbar(
@@ -26,7 +27,11 @@ class _CategoryListWidgetState extends State<CategoryListWidget> {
         itemBuilder: (context, index) {
           Category category = categories[index];
           return ListTile(
-            onTap: () {},
+            onTap: () => Navigator.pushNamed(
+              context,
+              AppRouter.CATEGORY,
+              arguments: category,
+            ),
             title: Text(category.name),
           );
         },
