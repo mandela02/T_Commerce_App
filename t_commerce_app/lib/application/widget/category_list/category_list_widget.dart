@@ -12,12 +12,12 @@ class _CategoryListWidgetState extends State<CategoryListWidget> {
   @override
   void initState() {
     super.initState();
-    context.read<CategoryListViewModel>().getData();
   }
 
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<CategoryListViewModel>();
+    viewModel.getData();
     final categories = viewModel.categories;
 
     return Scrollbar(

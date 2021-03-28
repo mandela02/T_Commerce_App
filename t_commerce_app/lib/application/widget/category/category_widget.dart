@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:t_commerce_app/application/widget/category/category_view_model.dart';
+import 'package:t_commerce_app/application/widget/reusable_wigdet/alert_dialog.dart';
 
 class CategoryWidget extends StatefulWidget {
   @override
@@ -13,6 +16,19 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   double _commonFontSize = 12;
 
   @override
+  void dispose() {
+    if (_nameTextController != null) {
+      _nameTextController!.dispose();
+    }
+
+    if (_descriptionTextController != null) {
+      _descriptionTextController!.dispose();
+    }
+
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     _initController();
@@ -24,7 +40,10 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   }
 
   Widget get deleteButton {
-    return IconButton(icon: Icon(Icons.delete), onPressed: () {});
+    return IconButton(
+      icon: Icon(Icons.delete),
+      onPressed: () => onDeleteWidget(),
+    );
   }
 
   Widget get headerField {
@@ -60,12 +79,15 @@ class _CategoryWidgetState extends State<CategoryWidget> {
           ),
           Container(
             height: 40,
-            child: CupertinoTextField(
-              placeholder: "Enter product name",
-              controller: _nameTextController,
-              textAlignVertical: TextAlignVertical.center,
-              style: TextStyle(
-                fontSize: _commonFontSize,
+            child: Consumer<CategoryViewModel>(
+              builder: (context, viewModel, child) => CupertinoTextField(
+                placeholder: "Enter product name",
+                controller: _nameTextController,
+                textAlignVertical: TextAlignVertical.center,
+                style: TextStyle(
+                  fontSize: _commonFontSize,
+                ),
+                onChanged: (name) => viewModel.setName(name: name),
               ),
             ),
           ),
@@ -91,13 +113,17 @@ class _CategoryWidgetState extends State<CategoryWidget> {
         Scrollbar(
           child: Container(
             height: 200,
-            child: CupertinoTextField(
-              controller: _descriptionTextController,
-              placeholder: "Enter description",
-              maxLines: null,
-              textAlignVertical: TextAlignVertical.top,
-              style: TextStyle(
-                fontSize: _commonFontSize,
+            child: Consumer<CategoryViewModel>(
+              builder: (context, viewModel, child) => CupertinoTextField(
+                controller: _descriptionTextController,
+                placeholder: "Enter description",
+                maxLines: null,
+                textAlignVertical: TextAlignVertical.top,
+                style: TextStyle(
+                  fontSize: _commonFontSize,
+                ),
+                onChanged: (description) =>
+                    viewModel.setDescription(description: description),
               ),
             ),
           ),
@@ -123,13 +149,17 @@ class _CategoryWidgetState extends State<CategoryWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<CategoryViewModel>();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.red,
-        title: Text("Category"),
-        actions: [
-          deleteButton,
-        ],
+        title: Text(viewModel.appBarTitle),
+        actions: viewModel.isDeleteButtonVisible
+            ? [
+                deleteButton,
+              ]
+            : [deleteButton],
         elevation: 0,
       ),
       body: GestureDetector(
@@ -167,14 +197,17 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                   ),
                   Center(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: viewModel.isSaveButtonEnable
+                          ? () => viewModel.save(context)
+                          : null,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 8, horizontal: 40),
                         child: Text(
-                          "Save",
+                          viewModel.buttonTitle,
                           style: TextStyle(
                             fontSize: 20,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -186,17 +219,35 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                           ),
                         ),
                         elevation: MaterialStateProperty.all<double>(0),
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.blue),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            viewModel.isSaveButtonEnable
+                                ? Colors.blue
+                                : Colors.grey),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  void onDeleteWidget() {
+    showDialog(
+      context: this.context,
+      builder: (content) {
+        return CustomAlertDialog(
+            title: "Delete this category?",
+            content:
+                "Are you sure that you want to delete this category?\nThis action can not be reverse!",
+            successButtonTitle: "Delete",
+            onSuccess: () {},
+            cancelButtonTitle: "Cancel",
+            onCancel: () {});
+      },
     );
   }
 }

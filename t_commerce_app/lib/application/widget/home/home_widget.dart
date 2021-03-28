@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/application/widget/category_list/notifier_category_list_widget.dart';
 import 'package:t_commerce_app/application/widget/orders/orders_widget.dart';
 import 'package:t_commerce_app/application/widget/product/products_widget.dart';
@@ -34,6 +35,18 @@ class _HomeWidgetState extends State<HomeWidget> {
     _selectedMenuItem = _managementItems.first;
   }
 
+  Widget? get _rightAppBarButton {
+    if (_selectedMenuItem.title == "Category") {
+      return IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () {
+            Navigator.pushNamed(context, AppRouter.CATEGORY);
+          });
+    } else {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,9 +58,10 @@ class _HomeWidgetState extends State<HomeWidget> {
           _selectedMenuItem.title,
           style: TextStyle(color: Colors.white),
         ),
+        actions: getAllActionButtons(),
       ),
       body: Center(
-        child: _getMenuItemWidget(_selectedMenuItem),
+        child: _selectedMenuItem.content,
       ),
       drawer: Drawer(
         child: Container(
@@ -135,5 +149,13 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   Widget _getMenuItemWidget(SideMenuItem menuItem) {
     return menuItem.content;
+  }
+
+  List<Widget> getAllActionButtons() {
+    if (_rightAppBarButton != null) {
+      return [_rightAppBarButton!];
+    } else {
+      return [];
+    }
   }
 }
