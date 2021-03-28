@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:t_commerce_app/application/widget/category_list/category_list_cart_view.dart';
+import 'package:t_commerce_app/application/widget/category_list/category_list_card_widget.dart';
 import 'package:t_commerce_app/application/widget/category_list/category_list_view_model.dart';
 import 'package:t_commerce_app/domain/model/category.dart';
 
@@ -29,7 +29,7 @@ class _CategoryListWidgetState extends State<CategoryListWidget> {
           itemCount: categories.length,
           itemBuilder: (context, index) {
             Category category = categories[index];
-            return CategoryListCardView(category: category);
+            return CategoryListCardWidget(category: category);
           },
         ),
       ),

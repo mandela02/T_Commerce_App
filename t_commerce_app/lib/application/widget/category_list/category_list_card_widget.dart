@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/domain/model/category.dart';
 
-class CategoryListCardView extends StatelessWidget {
+class CategoryListCardWidget extends StatelessWidget {
   final Category category;
 
-  const CategoryListCardView({Key? key, required this.category})
+  const CategoryListCardWidget({Key? key, required this.category})
       : super(key: key);
 
   @override
