@@ -6,28 +6,46 @@ import 'package:t_commerce_app/application/widget/product/products_widget.dart';
 import 'package:t_commerce_app/application/widget/settings/settings_widget.dart';
 import 'package:t_commerce_app/domain/model/side_menu_item.dart';
 
+enum MenuItem { order, product, category, settings }
+
+extension MenuItemExtension on MenuItem {
+  SideMenuItem get menu {
+    switch (this) {
+      case MenuItem.order:
+        return SideMenuItem(
+            title: "Order", color: Colors.red, content: OrderWidget());
+      case MenuItem.product:
+        return SideMenuItem(
+            title: "Product", color: Colors.blue, content: ProductsWidget());
+      case MenuItem.category:
+        return SideMenuItem(
+            title: "Category",
+            color: Colors.pink,
+            content: NotifierCategoryListWidget());
+      case MenuItem.settings:
+        return SideMenuItem(
+            title: "Settings",
+            color: Colors.deepPurple,
+            content: SettingsWidget());
+    }
+  }
+}
+
 class HomeWidget extends StatefulWidget {
   @override
   _HomeWidgetState createState() => _HomeWidgetState();
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  List<SideMenuItem> _managementItems = [
-    SideMenuItem(title: "Order", color: Colors.red, content: OrderWidget()),
-    SideMenuItem(
-        title: "Product", color: Colors.blue, content: ProductsWidget()),
-    SideMenuItem(
-        title: "Category",
-        color: Colors.pink,
-        content: NotifierCategoryListWidget()),
+  List<MenuItem> _managementItems = [
+    MenuItem.order,
+    MenuItem.product,
+    MenuItem.category
   ];
 
-  List<SideMenuItem> _settingsItems = [
-    SideMenuItem(
-        title: "Settings", color: Colors.deepPurple, content: SettingsWidget()),
-  ];
+  List<MenuItem> _settingsItems = [MenuItem.settings];
 
-  late SideMenuItem _selectedMenuItem;
+  late MenuItem _selectedMenuItem;
 
   @override
   void initState() {
@@ -36,7 +54,8 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 
   Widget? get _rightAppBarButton {
-    if (_selectedMenuItem.title == "Category") {
+    if (_selectedMenuItem == MenuItem.category ||
+        _selectedMenuItem == MenuItem.product) {
       return IconButton(
           icon: Icon(Icons.add),
           onPressed: () {
@@ -52,16 +71,16 @@ class _HomeWidgetState extends State<HomeWidget> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: _selectedMenuItem.color,
+        backgroundColor: _selectedMenuItem.menu.color,
         elevation: 0,
         title: Text(
-          _selectedMenuItem.title,
+          _selectedMenuItem.menu.title,
           style: TextStyle(color: Colors.white),
         ),
         actions: getAllActionButtons(),
       ),
       body: Center(
-        child: _selectedMenuItem.content,
+        child: _selectedMenuItem.menu.content,
       ),
       drawer: Drawer(
         child: Container(
@@ -106,7 +125,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  Widget getCell(BuildContext context, {required SideMenuItem item}) {
+  Widget getCell(BuildContext context, {required MenuItem item}) {
     return Container(
       decoration: BoxDecoration(
         color: item == _selectedMenuItem ? Colors.grey[300] : Colors.white,
@@ -114,7 +133,7 @@ class _HomeWidgetState extends State<HomeWidget> {
       child: ListTile(
         leading: Icon(Icons.add),
         title: Text(
-          item.title,
+          item.menu.title,
           style: TextStyle(
             fontSize: 20,
             color: Colors.black,
@@ -141,14 +160,10 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  void onMenuClick({required SideMenuItem item}) {
+  void onMenuClick({required MenuItem item}) {
     setState(() {
       _selectedMenuItem = item;
     });
-  }
-
-  Widget _getMenuItemWidget(SideMenuItem menuItem) {
-    return menuItem.content;
   }
 
   List<Widget> getAllActionButtons() {

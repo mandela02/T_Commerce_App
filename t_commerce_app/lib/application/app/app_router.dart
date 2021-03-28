@@ -5,6 +5,7 @@ import 'package:t_commerce_app/domain/model/category.dart';
 
 class AppRouter {
   static const String CATEGORY = "/category";
+  static const String PRODUCT = "/product";
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
