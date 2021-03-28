@@ -30,8 +30,8 @@ class CustomAlertDialog extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              onSuccess();
               Navigator.pop(context);
+              onSuccess();
             },
             child: Text(
               successButtonTitle,
@@ -43,8 +43,8 @@ class CustomAlertDialog extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              onCancel();
               Navigator.pop(context);
+              onCancel();
             },
             child: Text(
               cancelButtonTitle,

@@ -13,6 +13,12 @@ class CategoryViewModel extends ChangeNotifier {
   CategoryViewModel({Category? category}) {
     this._category = category;
     this._useCase = UseCaseProvider().getCategoryUseCase();
+    setName(name: _category?.name ?? "");
+    setDescription(description: _category?.description ?? "");
+  }
+
+  Category? get category {
+    return _category;
   }
 
   String get buttonTitle {
@@ -36,8 +42,13 @@ class CategoryViewModel extends ChangeNotifier {
       Category category =
           Category.create(name: _name, description: _description);
       await _useCase.add(category);
-      Navigator.pop(context);
+    } else {
+      Category existCategory = _category!;
+      Category category = Category(
+          id: existCategory.id, name: _name, description: _description);
+      await _useCase.update(category);
     }
+    Navigator.pop(context);
   }
 
   void delete(BuildContext context) async {

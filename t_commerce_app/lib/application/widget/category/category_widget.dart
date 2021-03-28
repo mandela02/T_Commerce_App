@@ -35,14 +35,21 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   }
 
   void _initController() {
-    _nameTextController = TextEditingController(text: "");
-    _descriptionTextController = TextEditingController(text: "");
+    final viewModel = context.read<CategoryViewModel>();
+    _nameTextController =
+        TextEditingController(text: viewModel.category?.name ?? "");
+    _descriptionTextController =
+        TextEditingController(text: viewModel.category?.description ?? "");
   }
 
   Widget get deleteButton {
-    return IconButton(
-      icon: Icon(Icons.delete),
-      onPressed: () => onDeleteWidget(),
+    return Consumer<CategoryViewModel>(
+      builder: (context, viewModel, child) => IconButton(
+        icon: Icon(Icons.delete),
+        onPressed: () => onDeleteWidget(
+          onAgreeDelete: () => viewModel.delete(context),
+        ),
+      ),
     );
   }
 
@@ -235,7 +242,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
     );
   }
 
-  void onDeleteWidget() {
+  void onDeleteWidget({required Function onAgreeDelete}) {
     showDialog(
       context: this.context,
       builder: (content) {
@@ -244,7 +251,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
             content:
                 "Are you sure that you want to delete this category?\nThis action can not be reverse!",
             successButtonTitle: "Delete",
-            onSuccess: () {},
+            onSuccess: () => onAgreeDelete(),
             cancelButtonTitle: "Cancel",
             onCancel: () {});
       },

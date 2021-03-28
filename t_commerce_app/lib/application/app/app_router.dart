@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:t_commerce_app/application/widget/category/notifier_category_widget.dart';
+import 'package:t_commerce_app/domain/model/category.dart';
 
 class AppRouter {
   static const String CATEGORY = "/category";
@@ -8,7 +9,12 @@ class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case CATEGORY:
-        return MaterialPageRoute(builder: (_) => NotifierCategoryWidget());
+        final category = settings.arguments as Category?;
+        return MaterialPageRoute(
+          builder: (_) => NotifierCategoryWidget(
+            category: category,
+          ),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

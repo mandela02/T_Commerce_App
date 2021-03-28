@@ -20,7 +20,6 @@ class CategoryListUseCase implements CategoryListUseCaseType {
 
   @override
   Future<void> delete(Category category) async {
-    // TODO: implement delete
     return _repository.delete("id", category.id, TableName.categoryTableName);
   }
 }

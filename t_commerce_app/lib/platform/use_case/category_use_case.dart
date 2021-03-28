@@ -15,4 +15,11 @@ class CategoryUseCase implements CategoryUseCaseType {
   Future<void> remove(Category category) {
     return _repository.delete("id", category.id, TableName.categoryTableName);
   }
+
+  @override
+  Future<void> update(Category category) {
+    // TODO: implement update
+    return _repository.update(
+        category, "id", category.id, TableName.categoryTableName);
+  }
 }
