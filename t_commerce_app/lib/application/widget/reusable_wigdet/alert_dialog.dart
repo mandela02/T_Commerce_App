@@ -1,23 +1,31 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+enum AlertResult { success, cancel }
+
+extension AlertResultExtension on AlertResult {
+  String get result {
+    switch (this) {
+      case AlertResult.success:
+        return "SUCCESS";
+      case AlertResult.cancel:
+        return "CANCEL";
+    }
+  }
+}
+
 class CustomAlertDialog extends StatelessWidget {
   final String title;
   final String content;
   final String successButtonTitle;
   final String cancelButtonTitle;
 
-  final Function onSuccess;
-  final Function onCancel;
-
   const CustomAlertDialog(
       {Key? key,
       required this.title,
       required this.content,
       required this.successButtonTitle,
-      required this.onSuccess,
-      required this.cancelButtonTitle,
-      required this.onCancel})
+      required this.cancelButtonTitle})
       : super(key: key);
 
   @override
@@ -29,10 +37,7 @@ class CustomAlertDialog extends StatelessWidget {
         content: Text(content),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              onSuccess();
-            },
+            onPressed: () => Navigator.pop(context, AlertResult.success),
             child: Text(
               successButtonTitle,
               style: TextStyle(
@@ -42,10 +47,7 @@ class CustomAlertDialog extends StatelessWidget {
             ),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              onCancel();
-            },
+            onPressed: () => Navigator.pop(context, AlertResult.cancel),
             child: Text(
               cancelButtonTitle,
               style: TextStyle(
