@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,6 @@ class CategoryWidget extends StatefulWidget {
 }
 
 class _CategoryWidgetState extends State<CategoryWidget> {
-  File? _image;
   final picker = ImagePicker();
 
   late TextEditingController? _nameTextController;
@@ -63,25 +62,27 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   Widget get _headerField {
     return Row(
       children: [
-        GestureDetector(
-          onTap: () => _showImageActionSheet(),
-          child: _image == null
-              ? Container(
-                  height: 80,
-                  width: 80,
-                  child: Icon(Icons.camera_alt_outlined),
-                  decoration: new BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(40.0),
+        Consumer<CategoryViewModel>(
+          builder: (context, viewModel, child) => GestureDetector(
+            onTap: () => _showImageActionSheet(),
+            child: viewModel.image == null
+                ? Container(
+                    height: 80,
+                    width: 80,
+                    child: Icon(Icons.camera_alt_outlined),
+                    decoration: new BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(40.0),
+                      ),
                     ),
+                  )
+                : CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.grey[900],
+                    backgroundImage: MemoryImage(viewModel.image!),
                   ),
-                )
-              : CircleAvatar(
-                  radius: 40,
-                  backgroundColor: Colors.grey[900],
-                  backgroundImage: FileImage(_image!),
-                ),
+          ),
         ),
         SizedBox(
           width: 20,
@@ -323,19 +324,18 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   }
 
   Future getImage({required ActionSheetResult result}) async {
+    final viewModel = context.read<CategoryViewModel>();
+
     final pickedFile = await picker.getImage(
         source: result == ActionSheetResult.camera
             ? ImageSource.camera
             : ImageSource.gallery);
 
-    setState(
-      () {
-        if (pickedFile != null) {
-          _image = File(pickedFile.path);
-        } else {
-          print('No image selected.');
-        }
-      },
-    );
+    if (pickedFile != null) {
+      Uint8List image = await pickedFile.readAsBytes();
+      viewModel.setFile(image: image);
+    } else {
+      print('No image selected.');
+    }
   }
 }

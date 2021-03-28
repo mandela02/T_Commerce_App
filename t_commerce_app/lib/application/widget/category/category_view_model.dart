@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:t_commerce_app/domain/model/category.dart';
 import 'package:t_commerce_app/domain/use_case/category_use_case_type.dart';
@@ -9,12 +11,18 @@ class CategoryViewModel extends ChangeNotifier {
 
   String _name = "";
   String _description = "";
+  Uint8List? _image;
 
   CategoryViewModel({Category? category}) {
     this._category = category;
     this._useCase = UseCaseProvider().getCategoryUseCase();
     setName(name: _category?.name ?? "");
     setDescription(description: _category?.description ?? "");
+    setFile(image: _category?.image);
+  }
+
+  Uint8List? get image {
+    return _image;
   }
 
   Category? get category {
@@ -40,12 +48,15 @@ class CategoryViewModel extends ChangeNotifier {
   void save(BuildContext context) async {
     if (_category == null) {
       Category category =
-          Category.create(name: _name, description: _description);
+          Category.create(name: _name, description: _description, image: image);
       await _useCase.add(category);
     } else {
       Category existCategory = _category!;
       Category category = Category(
-          id: existCategory.id, name: _name, description: _description);
+          id: existCategory.id,
+          name: _name,
+          description: _description,
+          image: image);
       await _useCase.update(category);
     }
     Navigator.pop(context);
@@ -65,5 +76,10 @@ class CategoryViewModel extends ChangeNotifier {
 
   void setDescription({required String description}) {
     this._description = description;
+  }
+
+  void setFile({required Uint8List? image}) {
+    this._image = image;
+    notifyListeners();
   }
 }

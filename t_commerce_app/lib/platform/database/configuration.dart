@@ -29,7 +29,8 @@ class Configuration {
         CREATE TABLE ${TableName.categoryTableName} (
         id TEXT PRIMARY KEY, 
         name TEXT, 
-        description TEXT
+        description TEXT, 
+        image BLOB
         )
         """;
 
