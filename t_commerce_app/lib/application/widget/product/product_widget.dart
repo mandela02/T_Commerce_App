@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/application/widget/product/product_view_model.dart';
@@ -15,6 +17,22 @@ class ProductWidget extends StatefulWidget {
 
 class _ProductWidgetState extends State<ProductWidget> {
   double _commonFontSize = 12;
+  late TextEditingController _barCodeTextController;
+
+  @override
+  void initState() {
+    super.initState();
+    final viewModel = context.read<ProductViewModel>();
+    viewModel.getCategories();
+    _barCodeTextController = TextEditingController(text: viewModel.barCode);
+  }
+
+  @override
+  void dispose() {
+    _barCodeTextController.dispose();
+
+    super.dispose();
+  }
 
   Widget get _nameWidget {
     return Consumer<ProductViewModel>(
@@ -89,14 +107,14 @@ class _ProductWidgetState extends State<ProductWidget> {
               height: 40,
               isMultiLine: false,
               size: _commonFontSize,
-              controller: null,
+              controller: _barCodeTextController,
               onTextChange: (code) => viewModel.setBarCode(barCode: code),
             ),
           ),
           Container(
             height: 65,
             child: TextButton(
-              onPressed: () {},
+              onPressed: () => _scanBarcodeNormal(),
               child: Icon(Icons.qr_code),
             ),
           ),
@@ -159,13 +177,6 @@ class _ProductWidgetState extends State<ProductWidget> {
         ],
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final viewModel = context.read<ProductViewModel>();
-    viewModel.getCategories();
   }
 
   @override
@@ -265,5 +276,25 @@ class _ProductWidgetState extends State<ProductWidget> {
     final viewModel = context.read<ProductViewModel>();
     await Navigator.pushNamed(context, AppRouter.CATEGORY);
     viewModel.getCategories();
+  }
+
+  Future<void> _scanBarcodeNormal() async {
+    final viewModel = context.read<ProductViewModel>();
+
+    String barcodeScanRes;
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+      print(barcodeScanRes);
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+
+    if (!mounted) return;
+
+    viewModel.setBarCode(barCode: barcodeScanRes);
+    setState(() {
+      _barCodeTextController.text = viewModel.barCode;
+    });
   }
 }

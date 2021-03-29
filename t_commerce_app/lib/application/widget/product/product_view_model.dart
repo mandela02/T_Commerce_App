@@ -85,10 +85,12 @@ extension ProductViewModelSetter on ProductViewModel {
 
   void setBarCode({required String barCode}) {
     _barCode = barCode;
+    change();
   }
 
   void setDiscountPrice({required String price}) {
     _discountPrice = price;
+    change();
   }
 
   void setOriginalPrice({required String price}) {
@@ -98,6 +100,7 @@ extension ProductViewModelSetter on ProductViewModel {
 
   void setDescription({required String description}) {
     _description = description;
+    change();
   }
 
   void setName({required String name}) {
