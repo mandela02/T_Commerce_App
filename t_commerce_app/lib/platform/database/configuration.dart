@@ -42,8 +42,8 @@ class Configuration {
         discountPrice INTEGER, 
         createDate INTEGER, 
         updateDate INTEGER, 
-        String TEXT, 
-        description TEXT 
+        barCode TEXT, 
+        description TEXT
         )
         """;
 

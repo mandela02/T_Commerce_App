@@ -219,7 +219,9 @@ class _ProductWidgetState extends State<ProductWidget> {
                       backgroundColor: viewModel.isSaveButtonEnable
                           ? Colors.blue
                           : Colors.grey,
-                      onClick: () {}),
+                      onClick: viewModel.isSaveButtonEnable
+                          ? () => viewModel.saveProduct(context)
+                          : null),
                 )
               ],
             ),
@@ -265,7 +267,10 @@ class _ProductWidgetState extends State<ProductWidget> {
               .toList() +
           [
             CupertinoActionSheetAction(
-              onPressed: () => _createNewCategory(),
+              onPressed: () {
+                Navigator.pop(context);
+                _createNewCategory();
+              },
               child: Text("Create new category"),
             )
           ],

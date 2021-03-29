@@ -16,12 +16,7 @@ class Category implements ModelType {
       required this.image});
 
   Category.create(
-      {required this.name, required this.description, required this.image}) {
-    this.id = Uuid().v4();
-    this.name = name;
-    this.description = description;
-    this.image = image;
-  }
+      {required this.name, required this.description, required this.image});
 
   @override
   Map<String, dynamic> toMap() {
