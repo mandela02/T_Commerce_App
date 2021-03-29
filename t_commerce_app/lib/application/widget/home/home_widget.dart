@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/application/widget/category_list/notifier_category_list_widget.dart';
 import 'package:t_commerce_app/application/widget/orders/orders_widget.dart';
-import 'package:t_commerce_app/application/widget/product/products_widget.dart';
+import 'package:t_commerce_app/application/widget/products_list/products_list_widget.dart';
 import 'package:t_commerce_app/application/widget/settings/settings_widget.dart';
 import 'package:t_commerce_app/domain/model/side_menu_item.dart';
 
@@ -16,7 +16,9 @@ extension MenuItemExtension on MenuItem {
             title: "Order", color: Colors.red, content: OrderWidget());
       case MenuItem.product:
         return SideMenuItem(
-            title: "Product", color: Colors.blue, content: ProductsWidget());
+            title: "Product",
+            color: Colors.blue,
+            content: ProductsListWidget());
       case MenuItem.category:
         return SideMenuItem(
             title: "Category",
@@ -58,8 +60,9 @@ class _HomeWidgetState extends State<HomeWidget> {
         _selectedMenuItem == MenuItem.product) {
       return IconButton(
           icon: Icon(Icons.add),
-          onPressed: () {
-            Navigator.pushNamed(context, AppRouter.CATEGORY);
+          onPressed: () async {
+            final result =
+                await Navigator.pushNamed(context, AppRouter.CATEGORY);
           });
     } else {
       return null;

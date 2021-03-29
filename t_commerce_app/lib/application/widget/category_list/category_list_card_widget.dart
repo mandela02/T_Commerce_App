@@ -23,9 +23,7 @@ class CategoryListCardWidget extends StatelessWidget {
         title: Text(category.name),
         subtitle: Text(category.description),
         leading: category.image == null
-            ? Icon(
-                Icons.category,
-              )
+            ? Icon(Icons.category)
             : CircleAvatar(
                 backgroundColor: Colors.grey[100],
                 backgroundImage: MemoryImage(category.image!),

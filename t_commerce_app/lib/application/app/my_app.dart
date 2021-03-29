@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:t_commerce_app/application/app/app_router.dart';
-import 'package:t_commerce_app/application/widget/loading/loading_widget.dart';
+import 'package:t_commerce_app/application/widget/product/product_widget.dart';
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       onGenerateRoute: AppRouter.generateRoute,
-      home: LoadingWidget(),
+      home: ProductWidget(),
     );
   }
 }

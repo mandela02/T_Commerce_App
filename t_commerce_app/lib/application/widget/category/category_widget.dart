@@ -7,6 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:t_commerce_app/application/widget/category/action_sheet_result.dart';
 import 'package:t_commerce_app/application/widget/category/category_view_model.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/alert_dialog.dart';
+import 'package:t_commerce_app/application/widget/reusable_wigdet/delete_button_widget.dart';
+import 'package:t_commerce_app/application/widget/reusable_wigdet/intput_text_field_widget.dart';
+import 'package:t_commerce_app/application/widget/reusable_wigdet/round_button_widget.dart';
 
 class CategoryWidget extends StatefulWidget {
   @override
@@ -50,9 +53,8 @@ class _CategoryWidgetState extends State<CategoryWidget> {
 
   Widget get _deleteButton {
     return Consumer<CategoryViewModel>(
-      builder: (context, viewModel, child) => IconButton(
-        icon: Icon(Icons.delete),
-        onPressed: () => _showDeleteDialog(
+      builder: (context, viewModel, child) => DeleteButtonWidget(
+        onClick: () => _showDeleteDialog(
           onAgreeDelete: () => viewModel.delete(context),
         ),
       ),
@@ -95,71 +97,30 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   }
 
   Widget get _nameField {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            "Name *",
-            style: TextStyle(
-              fontSize: _commonFontSize,
-            ),
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          Container(
-            height: 40,
-            child: Consumer<CategoryViewModel>(
-              builder: (context, viewModel, child) => CupertinoTextField(
-                placeholder: "Enter product name",
-                controller: _nameTextController,
-                textAlignVertical: TextAlignVertical.center,
-                style: TextStyle(
-                  fontSize: _commonFontSize,
-                ),
-                onChanged: (name) => viewModel.setName(name: name),
-              ),
-            ),
-          ),
-        ],
-      ),
+    return Consumer<CategoryViewModel>(
+      builder: (context, viewModel, child) => InputTextFieldWidget(
+          title: "Name *",
+          placeholder: "Enter product name",
+          height: 40,
+          isMultiLine: false,
+          size: _commonFontSize,
+          controller: _nameTextController,
+          onTextChange: (name) => viewModel.setName(name: name)),
     );
   }
 
   Widget get _descriptionField {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          "Description",
-          style: TextStyle(
-            fontSize: _commonFontSize,
-          ),
-          textAlign: TextAlign.start,
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Scrollbar(
-          child: Container(
-            height: 200,
-            child: Consumer<CategoryViewModel>(
-              builder: (context, viewModel, child) => CupertinoTextField(
-                controller: _descriptionTextController,
-                placeholder: "Enter description",
-                maxLines: null,
-                textAlignVertical: TextAlignVertical.top,
-                style: TextStyle(
-                  fontSize: _commonFontSize,
-                ),
-                onChanged: (description) =>
-                    viewModel.setDescription(description: description),
-              ),
-            ),
-          ),
-        ),
-      ],
+    return Consumer<CategoryViewModel>(
+      builder: (context, viewModel, child) => InputTextFieldWidget(
+        title: "Description",
+        placeholder: "Enter description",
+        height: 200,
+        isMultiLine: true,
+        size: _commonFontSize,
+        controller: _descriptionTextController,
+        onTextChange: (description) =>
+            viewModel.setDescription(description: description),
+      ),
     );
   }
 
@@ -249,35 +210,14 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                     ),
                   ),
                   Center(
-                    child: ElevatedButton(
-                      onPressed: viewModel.isSaveButtonEnable
-                          ? () => viewModel.save(context)
-                          : null,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 40),
-                        child: Text(
-                          viewModel.buttonTitle,
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(1000.0),
-                          ),
-                        ),
-                        elevation: MaterialStateProperty.all<double>(0),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            viewModel.isSaveButtonEnable
-                                ? Colors.blue
-                                : Colors.grey),
-                      ),
-                    ),
+                    child: RoundButtonWidget(
+                        title: viewModel.buttonTitle,
+                        backgroundColor: viewModel.isSaveButtonEnable
+                            ? Colors.blue
+                            : Colors.grey,
+                        onClick: viewModel.isSaveButtonEnable
+                            ? () => viewModel.save(context)
+                            : null),
                   ),
                 ],
               ),
