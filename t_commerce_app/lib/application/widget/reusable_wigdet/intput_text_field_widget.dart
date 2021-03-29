@@ -33,9 +33,7 @@ class InputTextFieldWidget extends StatelessWidget {
             fontSize: size,
           ),
         ),
-        SizedBox(
-          height: 8,
-        ),
+        SizedBox(height: 8),
         ConstrainedBox(
           constraints: BoxConstraints(minHeight: height),
           child: CupertinoTextField(

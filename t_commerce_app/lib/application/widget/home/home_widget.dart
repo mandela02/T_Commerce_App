@@ -61,8 +61,18 @@ class _HomeWidgetState extends State<HomeWidget> {
       return IconButton(
           icon: Icon(Icons.add),
           onPressed: () async {
-            final result =
-                await Navigator.pushNamed(context, AppRouter.CATEGORY);
+            switch (_selectedMenuItem) {
+              case (MenuItem.category):
+                final result =
+                    await Navigator.pushNamed(context, AppRouter.CATEGORY);
+                break;
+              case (MenuItem.product):
+                final result =
+                    await Navigator.pushNamed(context, AppRouter.PRODUCT);
+                break;
+              default:
+                break;
+            }
           });
     } else {
       return null;
