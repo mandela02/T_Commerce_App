@@ -30,16 +30,33 @@ class ProductViewModel extends ChangeNotifier {
 
   void saveProduct(BuildContext context) async {
     int now = DateTime.now().millisecondsSinceEpoch;
+    int originalPrice = 0;
+    int discountPrice = 0;
+
+    try {
+      originalPrice = int.parse(_originalPrice);
+    } catch (e) {
+      originalPrice = 999999;
+    }
+
+    try {
+      discountPrice = int.parse(_discountPrice);
+    } catch (e) {
+      discountPrice = discountPrice;
+    }
+
     if (_product == null) {
       final Product product = Product.create(
           name: _name,
-          originalPrice: int.parse(_originalPrice),
-          discountPrice: int.parse(_discountPrice),
+          originalPrice: originalPrice,
+          discountPrice: discountPrice,
           createDate: now,
           updateDate: now,
           barCode: _barCode,
           description: _description);
-      await _useCase.save(product: product);
+      if (_selectedCategory != null) {
+        await _useCase.save(product: product, category: _selectedCategory!);
+      }
     } else {
       Product existProduct = _product!;
       final Product product = Product.create(

@@ -7,6 +7,8 @@ abstract class RepositoryType<T extends ModelType> {
   Future<void> insert(T object, String table);
   Future<void> delete(String field, String arg, String table);
   Future<void> update(T object, String field, String arg, String table);
+  Future<List<Map<String, dynamic>>> query(
+      dynamic field, String arg, String table);
 }
 
 class Repository<T extends ModelType> implements RepositoryType {
@@ -52,5 +54,18 @@ class Repository<T extends ModelType> implements RepositoryType {
       where: "$field = ?",
       whereArgs: [arg],
     );
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> query(
+      dynamic field, String arg, String table) async {
+    final Database db = await configuration.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      table,
+      where: "$field = ?",
+      whereArgs: [arg],
+    );
+    List<Map<String, dynamic>> result = maps;
+    return result;
   }
 }

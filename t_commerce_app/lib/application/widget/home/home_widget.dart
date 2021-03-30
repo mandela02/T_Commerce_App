@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/application/widget/category_list/notifier_category_list_widget.dart';
 import 'package:t_commerce_app/application/widget/orders/orders_widget.dart';
-import 'package:t_commerce_app/application/widget/products_list/products_list_widget.dart';
+import 'package:t_commerce_app/application/widget/products_list/notifier_products_list_widget.dart';
 import 'package:t_commerce_app/application/widget/settings/settings_widget.dart';
 import 'package:t_commerce_app/domain/model/side_menu_item.dart';
 
@@ -18,7 +18,7 @@ extension MenuItemExtension on MenuItem {
         return SideMenuItem(
             title: "Product",
             color: Colors.blue,
-            content: ProductsListWidget());
+            content: NotifierProductsListWidget());
       case MenuItem.category:
         return SideMenuItem(
             title: "Category",

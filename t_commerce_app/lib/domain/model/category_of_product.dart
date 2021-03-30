@@ -9,6 +9,8 @@ class CategoryOfProduct implements ModelType {
   CategoryOfProduct(this.id,
       {required this.categoryId, required this.productId});
 
+  CategoryOfProduct.create({required this.categoryId, required this.productId});
+
   @override
   Map<String, dynamic> toMap() {
     return {

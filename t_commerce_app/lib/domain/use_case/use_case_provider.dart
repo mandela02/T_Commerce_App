@@ -1,8 +1,10 @@
 import 'package:t_commerce_app/domain/use_case/category_list_use_case_type.dart';
 import 'package:t_commerce_app/domain/use_case/category_use_case_type.dart';
+import 'package:t_commerce_app/domain/use_case/products_list_use_case_type.dart';
 import 'package:t_commerce_app/platform/use_case/category_list_use_case.dart';
 import 'package:t_commerce_app/platform/use_case/category_use_case.dart';
 import 'package:t_commerce_app/platform/use_case/product_use_case.dart';
+import 'package:t_commerce_app/platform/use_case/products_list_use_case.dart';
 
 class UseCaseProvider {
   static final UseCaseProvider _singleton = UseCaseProvider._internal();
@@ -23,5 +25,9 @@ class UseCaseProvider {
 
   ProductUseCase getProductUseCase() {
     return ProductUseCase();
+  }
+
+  ProductsListUseCaseType getProductsListUseCase() {
+    return ProductsListUseCase();
   }
 }
