@@ -21,7 +21,6 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<ProductsListViewModel>();
-    //viewModel.getData();
     final products = viewModel.products;
 
     return Scrollbar(
@@ -72,7 +71,8 @@ class ProductCardWidget extends StatelessWidget {
         onTap: () => Navigator.pushNamed(
           context,
           AppRouter.PRODUCT,
-          arguments: category,
+          arguments:
+              ProductsListArguments(product: product, category: category),
         ),
         title: Text(product.name),
         subtitle: Text(category?.name ?? ""),
@@ -80,4 +80,11 @@ class ProductCardWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+class ProductsListArguments {
+  final Product? product;
+  final Category? category;
+
+  ProductsListArguments({required this.product, required this.category});
 }

@@ -19,9 +19,6 @@ class ProductsListUseCase implements ProductsListUseCaseType {
 
   @override
   Future<Category?> getSelectedCategory({required Product product}) async {
-    List<Map<String, dynamic>> all = await _categoryOfProductRepository
-        .getAll(TableName.categoryOfProductTableName);
-
     List<Map<String, dynamic>> categoryOfProductMaps =
         await _categoryOfProductRepository.query(
             "productId", product.id, TableName.categoryOfProductTableName);

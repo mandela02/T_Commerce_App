@@ -18,6 +18,20 @@ class ProductViewModel extends ChangeNotifier {
   String _discountPrice = "";
   String _barCode = "";
 
+  ProductViewModel({required Product? product, required Category? category}) {
+    this._product = product;
+    this._selectedCategory = category;
+
+    if (_product != null) {
+      final notNullProduct = product!;
+      setName(name: notNullProduct.name);
+      setDescription(description: notNullProduct.description);
+      setOriginalPrice(price: "${notNullProduct.originalPrice}");
+      setDiscountPrice(price: "${notNullProduct.discountPrice}");
+      setBarCode(barCode: notNullProduct.barCode);
+    }
+  }
+
   void getCategories() async {
     List<Category> categories = await _useCase.getAllCategory();
     _categories = categories;
@@ -59,15 +73,17 @@ class ProductViewModel extends ChangeNotifier {
       }
     } else {
       Product existProduct = _product!;
-      final Product product = Product.create(
+      final Product product = Product(existProduct.id,
           name: _name,
-          originalPrice: int.parse(_originalPrice),
-          discountPrice: int.parse(_discountPrice),
+          originalPrice: originalPrice,
+          discountPrice: discountPrice,
           createDate: existProduct.createDate,
           updateDate: now,
           barCode: _barCode,
           description: _description);
-      await _useCase.update(product: product);
+      if (_selectedCategory != null) {
+        await _useCase.update(product: product, category: _selectedCategory!);
+      }
     }
     Navigator.pop(context);
   }

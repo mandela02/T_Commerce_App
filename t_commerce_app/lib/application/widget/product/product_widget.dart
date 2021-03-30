@@ -18,6 +18,10 @@ class ProductWidget extends StatefulWidget {
 class _ProductWidgetState extends State<ProductWidget> {
   double _commonFontSize = 12;
   late TextEditingController _barCodeTextController;
+  late TextEditingController _nameTextController;
+  late TextEditingController _originalPriceTextController;
+  late TextEditingController _discountTextController;
+  late TextEditingController _descriptionTextController;
 
   @override
   void initState() {
@@ -25,6 +29,13 @@ class _ProductWidgetState extends State<ProductWidget> {
     final viewModel = context.read<ProductViewModel>();
     viewModel.getCategories();
     _barCodeTextController = TextEditingController(text: viewModel.barCode);
+    _nameTextController = TextEditingController(text: viewModel.name);
+    _originalPriceTextController =
+        TextEditingController(text: viewModel.originalPrice);
+    _discountTextController =
+        TextEditingController(text: viewModel.discountPrice);
+    _descriptionTextController =
+        TextEditingController(text: viewModel.description);
   }
 
   @override
@@ -42,7 +53,7 @@ class _ProductWidgetState extends State<ProductWidget> {
         height: 40,
         isMultiLine: false,
         size: _commonFontSize,
-        controller: null,
+        controller: _nameTextController,
         onTextChange: (name) => viewModel.setName(name: name),
       ),
     );
@@ -56,7 +67,7 @@ class _ProductWidgetState extends State<ProductWidget> {
           height: 200,
           isMultiLine: true,
           size: _commonFontSize,
-          controller: null,
+          controller: _descriptionTextController,
           onTextChange: (description) =>
               viewModel.setDescription(description: description)),
     );
@@ -74,7 +85,7 @@ class _ProductWidgetState extends State<ProductWidget> {
               height: 40,
               isMultiLine: false,
               size: _commonFontSize,
-              controller: null,
+              controller: _originalPriceTextController,
               onTextChange: (price) => viewModel.setOriginalPrice(price: price),
             ),
           ),
@@ -87,7 +98,7 @@ class _ProductWidgetState extends State<ProductWidget> {
               height: 40,
               isMultiLine: false,
               size: _commonFontSize,
-              controller: null,
+              controller: _discountTextController,
               onTextChange: (price) => viewModel.setDiscountPrice(price: price),
             ),
           ),
