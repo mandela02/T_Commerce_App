@@ -23,6 +23,15 @@ class Product implements ModelType {
       required this.barCode,
       required this.description});
 
+  Product.create(
+      {required this.name,
+      required this.originalPrice,
+      required this.discountPrice,
+      required this.createDate,
+      required this.updateDate,
+      required this.barCode,
+      required this.description});
+
   @override
   Map<String, dynamic> toMap() {
     return {

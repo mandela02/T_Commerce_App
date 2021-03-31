@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/application/widget/category_list/notifier_category_list_widget.dart';
 import 'package:t_commerce_app/application/widget/orders/orders_widget.dart';
-import 'package:t_commerce_app/application/widget/product/products_widget.dart';
+import 'package:t_commerce_app/application/widget/products_list/notifier_products_list_widget.dart';
 import 'package:t_commerce_app/application/widget/settings/settings_widget.dart';
 import 'package:t_commerce_app/domain/model/side_menu_item.dart';
 
@@ -16,7 +16,9 @@ extension MenuItemExtension on MenuItem {
             title: "Order", color: Colors.red, content: OrderWidget());
       case MenuItem.product:
         return SideMenuItem(
-            title: "Product", color: Colors.blue, content: ProductsWidget());
+            title: "Product",
+            color: Colors.blue,
+            content: NotifierProductsListWidget());
       case MenuItem.category:
         return SideMenuItem(
             title: "Category",
@@ -45,7 +47,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   List<MenuItem> _settingsItems = [MenuItem.settings];
 
-  late MenuItem _selectedMenuItem;
+  MenuItem? _selectedMenuItem;
 
   @override
   void initState() {
@@ -58,8 +60,21 @@ class _HomeWidgetState extends State<HomeWidget> {
         _selectedMenuItem == MenuItem.product) {
       return IconButton(
           icon: Icon(Icons.add),
-          onPressed: () {
-            Navigator.pushNamed(context, AppRouter.CATEGORY);
+          onPressed: () async {
+            switch (_selectedMenuItem) {
+              case (MenuItem.category):
+                onPushToNewWidget(() async {
+                  await Navigator.pushNamed(context, AppRouter.CATEGORY);
+                });
+                break;
+              case (MenuItem.product):
+                onPushToNewWidget(() async {
+                  await Navigator.pushNamed(context, AppRouter.PRODUCT);
+                });
+                break;
+              default:
+                break;
+            }
           });
     } else {
       return null;
@@ -71,16 +86,16 @@ class _HomeWidgetState extends State<HomeWidget> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: _selectedMenuItem.menu.color,
+        backgroundColor: _selectedMenuItem?.menu.color,
         elevation: 0,
         title: Text(
-          _selectedMenuItem.menu.title,
+          _selectedMenuItem?.menu.title ?? "",
           style: TextStyle(color: Colors.white),
         ),
         actions: getAllActionButtons(),
       ),
       body: Center(
-        child: _selectedMenuItem.menu.content,
+        child: _selectedMenuItem?.menu.content,
       ),
       drawer: Drawer(
         child: Container(
@@ -172,5 +187,16 @@ class _HomeWidgetState extends State<HomeWidget> {
     } else {
       return [];
     }
+  }
+
+  void onPushToNewWidget(Function push) async {
+    final selected = _selectedMenuItem;
+    setState(() {
+      _selectedMenuItem = null;
+    });
+    await push();
+    setState(() {
+      _selectedMenuItem = selected;
+    });
   }
 }
