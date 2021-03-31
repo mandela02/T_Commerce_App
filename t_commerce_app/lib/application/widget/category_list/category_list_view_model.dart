@@ -5,7 +5,7 @@ import 'package:t_commerce_app/domain/use_case/use_case_provider.dart';
 
 class CategoryListViewModel extends ChangeNotifier {
   List<Category> _categories = [];
-  List<Category> get categories => _categories;
+  List<Category> get categories => _categories.reversed.toList();
 
   late CategoryListUseCaseType _useCase;
 

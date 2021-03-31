@@ -32,8 +32,6 @@ class ProductUseCase implements ProductUseCaseType {
     print(product.id);
     List<Map<String, dynamic>> all = await _categoryOfProductRepository
         .getAll(TableName.categoryOfProductTableName);
-    print(categoryOfProducts);
-    print(all);
 
     if (categoryOfProducts.isNotEmpty) {
       String categoryOfProductId = categoryOfProducts.first.id;

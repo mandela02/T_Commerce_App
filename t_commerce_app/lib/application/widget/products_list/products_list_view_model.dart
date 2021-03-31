@@ -6,7 +6,7 @@ import 'package:t_commerce_app/domain/use_case/use_case_provider.dart';
 
 class ProductsListViewModel extends ChangeNotifier {
   List<Product> _products = [];
-  List<Product> get products => _products;
+  List<Product> get products => _products.reversed.toList();
 
   late ProductsListUseCaseType _useCase;
 

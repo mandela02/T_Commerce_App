@@ -39,7 +39,20 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
                   return Text("an unexpected error has occurred");
                 } else if (category.hasData) {
                   return ProductCardWidget(
-                      category: category.data, product: product);
+                    category: category.data,
+                    product: product,
+                    onCellTap: () async {
+                      await Navigator.pushNamed(
+                        context,
+                        AppRouter.PRODUCT,
+                        arguments: ProductsListArguments(
+                          product: product,
+                          category: category.data,
+                        ),
+                      );
+                      viewModel.getData();
+                    },
+                  );
                 } else {
                   return Text("Loading data");
                 }
@@ -56,9 +69,13 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
 class ProductCardWidget extends StatelessWidget {
   final Category? category;
   final Product product;
+  final Function onCellTap;
 
   const ProductCardWidget(
-      {Key? key, required this.category, required this.product})
+      {Key? key,
+      required this.category,
+      required this.product,
+      required this.onCellTap})
       : super(key: key);
 
   @override
@@ -68,12 +85,7 @@ class ProductCardWidget extends StatelessWidget {
       shadowColor: Colors.black,
       color: Colors.white,
       child: ListTile(
-        onTap: () => Navigator.pushNamed(
-          context,
-          AppRouter.PRODUCT,
-          arguments:
-              ProductsListArguments(product: product, category: category),
-        ),
+        onTap: () => onCellTap(),
         title: Text(product.name),
         subtitle: Text(category?.name ?? ""),
         isThreeLine: true,

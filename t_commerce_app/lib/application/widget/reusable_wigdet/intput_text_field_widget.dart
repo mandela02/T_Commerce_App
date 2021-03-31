@@ -9,6 +9,7 @@ class InputTextFieldWidget extends StatelessWidget {
   final bool isMultiLine;
   final double size;
   final TextEditingController? controller;
+  final TextInputType keyboard;
   final Function(String) onTextChange;
 
   const InputTextFieldWidget(
@@ -19,6 +20,7 @@ class InputTextFieldWidget extends StatelessWidget {
       required this.isMultiLine,
       required this.size,
       required this.controller,
+      required this.keyboard,
       required this.onTextChange})
       : super(key: key);
 
@@ -42,6 +44,7 @@ class InputTextFieldWidget extends StatelessWidget {
             textAlignVertical:
                 isMultiLine ? TextAlignVertical.top : TextAlignVertical.center,
             maxLines: isMultiLine ? null : 1,
+            keyboardType: keyboard,
             style: TextStyle(
               fontSize: size,
             ),

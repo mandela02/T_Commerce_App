@@ -54,6 +54,7 @@ class _ProductWidgetState extends State<ProductWidget> {
         isMultiLine: false,
         size: _commonFontSize,
         controller: _nameTextController,
+        keyboard: TextInputType.text,
         onTextChange: (name) => viewModel.setName(name: name),
       ),
     );
@@ -62,14 +63,16 @@ class _ProductWidgetState extends State<ProductWidget> {
   Widget get _descriptionWidget {
     return Consumer<ProductViewModel>(
       builder: (context, viewModel, child) => InputTextFieldWidget(
-          title: "Description",
-          placeholder: "Enter production description",
-          height: 200,
-          isMultiLine: true,
-          size: _commonFontSize,
-          controller: _descriptionTextController,
-          onTextChange: (description) =>
-              viewModel.setDescription(description: description)),
+        title: "Description",
+        placeholder: "Enter production description",
+        height: 200,
+        isMultiLine: true,
+        size: _commonFontSize,
+        controller: _descriptionTextController,
+        keyboard: TextInputType.text,
+        onTextChange: (description) =>
+            viewModel.setDescription(description: description),
+      ),
     );
   }
 
@@ -86,6 +89,7 @@ class _ProductWidgetState extends State<ProductWidget> {
               isMultiLine: false,
               size: _commonFontSize,
               controller: _originalPriceTextController,
+              keyboard: TextInputType.number,
               onTextChange: (price) => viewModel.setOriginalPrice(price: price),
             ),
           ),
@@ -99,6 +103,7 @@ class _ProductWidgetState extends State<ProductWidget> {
               isMultiLine: false,
               size: _commonFontSize,
               controller: _discountTextController,
+              keyboard: TextInputType.number,
               onTextChange: (price) => viewModel.setDiscountPrice(price: price),
             ),
           ),
@@ -119,6 +124,7 @@ class _ProductWidgetState extends State<ProductWidget> {
               isMultiLine: false,
               size: _commonFontSize,
               controller: _barCodeTextController,
+              keyboard: TextInputType.text,
               onTextChange: (code) => viewModel.setBarCode(barCode: code),
             ),
           ),

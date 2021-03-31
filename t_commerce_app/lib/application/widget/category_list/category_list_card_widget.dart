@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/domain/model/category.dart';
 
 class CategoryListCardWidget extends StatelessWidget {
   final Category category;
+  final Function onTap;
 
-  const CategoryListCardWidget({Key? key, required this.category})
+  const CategoryListCardWidget(
+      {Key? key, required this.category, required this.onTap})
       : super(key: key);
 
   @override
@@ -15,11 +16,7 @@ class CategoryListCardWidget extends StatelessWidget {
       shadowColor: Colors.black,
       color: Colors.white,
       child: ListTile(
-        onTap: () => Navigator.pushNamed(
-          context,
-          AppRouter.CATEGORY,
-          arguments: category,
-        ),
+        onTap: () => onTap(),
         title: Text(category.name),
         subtitle: Text(category.description),
         leading: category.image == null

@@ -47,7 +47,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   List<MenuItem> _settingsItems = [MenuItem.settings];
 
-  late MenuItem _selectedMenuItem;
+  MenuItem? _selectedMenuItem;
 
   @override
   void initState() {
@@ -63,12 +63,14 @@ class _HomeWidgetState extends State<HomeWidget> {
           onPressed: () async {
             switch (_selectedMenuItem) {
               case (MenuItem.category):
-                final result =
-                    await Navigator.pushNamed(context, AppRouter.CATEGORY);
+                onPushToNewWidget(() async {
+                  await Navigator.pushNamed(context, AppRouter.CATEGORY);
+                });
                 break;
               case (MenuItem.product):
-                final result =
-                    await Navigator.pushNamed(context, AppRouter.PRODUCT);
+                onPushToNewWidget(() async {
+                  await Navigator.pushNamed(context, AppRouter.PRODUCT);
+                });
                 break;
               default:
                 break;
@@ -84,16 +86,16 @@ class _HomeWidgetState extends State<HomeWidget> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: _selectedMenuItem.menu.color,
+        backgroundColor: _selectedMenuItem?.menu.color,
         elevation: 0,
         title: Text(
-          _selectedMenuItem.menu.title,
+          _selectedMenuItem?.menu.title ?? "",
           style: TextStyle(color: Colors.white),
         ),
         actions: getAllActionButtons(),
       ),
       body: Center(
-        child: _selectedMenuItem.menu.content,
+        child: _selectedMenuItem?.menu.content,
       ),
       drawer: Drawer(
         child: Container(
@@ -185,5 +187,16 @@ class _HomeWidgetState extends State<HomeWidget> {
     } else {
       return [];
     }
+  }
+
+  void onPushToNewWidget(Function push) async {
+    final selected = _selectedMenuItem;
+    setState(() {
+      _selectedMenuItem = null;
+    });
+    await push();
+    setState(() {
+      _selectedMenuItem = selected;
+    });
   }
 }

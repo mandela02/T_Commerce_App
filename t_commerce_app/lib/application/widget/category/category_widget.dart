@@ -105,6 +105,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
           isMultiLine: false,
           size: _commonFontSize,
           controller: _nameTextController,
+          keyboard: TextInputType.text,
           onTextChange: (name) => viewModel.setName(name: name)),
     );
   }
@@ -118,6 +119,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
         isMultiLine: true,
         size: _commonFontSize,
         controller: _descriptionTextController,
+        keyboard: TextInputType.text,
         onTextChange: (description) =>
             viewModel.setDescription(description: description),
       ),
