@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:t_commerce_app/domain/model/category.dart';
 import 'package:t_commerce_app/domain/model/product.dart';
@@ -8,6 +10,9 @@ class ProductViewModel extends ChangeNotifier {
   ProductUseCaseType _useCase = UseCaseProvider().getProductUseCase();
 
   List<Category> _categories = [];
+  List<Uint8List> _images = [];
+
+  Uint8List? _selectedImage;
 
   Category? _selectedCategory;
   Product? _product;
@@ -135,6 +140,9 @@ extension ProductViewModelGetter on ProductViewModel {
   Category? get selectedCategory {
     return _selectedCategory;
   }
+
+  List<Uint8List> get images => _images;
+  Uint8List? get selectedImage => _selectedImage;
 }
 
 extension ProductViewModelSetter on ProductViewModel {
@@ -166,5 +174,27 @@ extension ProductViewModelSetter on ProductViewModel {
   void setName({required String name}) {
     _name = name;
     change();
+  }
+
+  void setSelectedImage({required Uint8List? image}) {
+    _selectedImage = image;
+    change();
+  }
+
+  void setListImages({required List<Uint8List> images}) {
+    _images = images;
+    _updateSelectedImage();
+    change();
+  }
+}
+
+extension ProductViewModelFunction on ProductViewModel {
+  void _updateSelectedImage() {
+    if (images.isNotEmpty &&
+        (selectedImage == null || !images.contains(selectedImage))) {
+      _selectedImage = images.first;
+    } else if (images.isEmpty) {
+      _selectedImage = null;
+    }
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/application/widget/product/product_view_model.dart';
@@ -19,11 +20,14 @@ class ProductWidget extends StatefulWidget {
 
 class _ProductWidgetState extends State<ProductWidget> {
   double _commonFontSize = 12;
+
   late TextEditingController _barCodeTextController;
   late TextEditingController _nameTextController;
   late TextEditingController _originalPriceTextController;
   late TextEditingController _discountTextController;
   late TextEditingController _descriptionTextController;
+
+  List<Asset> _images = [];
 
   @override
   void initState() {
@@ -253,7 +257,39 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
   }
 
   Widget get _imagesWidget {
-    return Container();
+    return Consumer<ProductViewModel>(
+      builder: (context, viewModel, child) => Center(
+        child: Column(
+          children: [
+            createImageWidget(
+              image: viewModel.selectedImage,
+              isInList: false,
+              imageSize: 150,
+            ),
+            SizedBox(height: 20),
+            Container(
+              height: 85,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: viewModel.images.length,
+                itemBuilder: (context, index) {
+                  final asset = viewModel.images[index];
+                  return createImageWidget(
+                    image: asset,
+                    isInList: true,
+                    imageSize: 65,
+                  );
+                },
+              ),
+            ),
+            CupertinoButton(
+              child: Text("Select Image"),
+              onPressed: () => loadAssets(),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -328,16 +364,86 @@ extension ProductWidgetFunction on _ProductWidgetState {
     );
   }
 
-  Widget createImageView(
-      {required Uint8List? image, required double imageSize}) {
-    return Container(
-      width: imageSize,
-      height: imageSize,
-      child: image == null
-          ? Icon(Icons.camera_alt_outlined)
-          : Image(
-              image: MemoryImage(image),
-            ),
+  Widget createImageWidget(
+      {required Uint8List? image,
+      required bool isInList,
+      required double imageSize}) {
+    final viewModel = context.watch<ProductViewModel>();
+
+    return GestureDetector(
+      onTap: () {
+        if (viewModel.images.isNotEmpty) {
+          viewModel.setSelectedImage(image: image);
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.all(2),
+        margin: EdgeInsets.all(10),
+        width: imageSize,
+        height: imageSize,
+        decoration: BoxDecoration(
+          color:
+              viewModel.selectedImage == image && isInList ? Colors.red : null,
+          borderRadius: BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+          child: image == null
+              ? Container(
+                  color: Colors.grey[200],
+                  child: Icon(
+                    Icons.camera_alt_outlined,
+                  ),
+                )
+              : Image(
+                  fit: BoxFit.cover,
+                  image: MemoryImage(image),
+                ),
+        ),
+      ),
     );
+  }
+
+  Future<void> loadAssets() async {
+    final viewModel = context.read<ProductViewModel>();
+
+    List<Asset> resultList = <Asset>[];
+    String error = 'No Error Detected';
+    print("load");
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 300,
+        enableCamera: true,
+        selectedAssets: _images,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Example App",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+    } on Exception catch (e) {
+      error = e.toString();
+      print(error);
+    }
+    if (!mounted) return;
+
+    final dataList = resultList.map(
+      (e) async {
+        final data = await e.getByteData();
+        return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      },
+    ).toList();
+
+    final realDataList = await Future.wait(dataList);
+
+    _images = resultList;
+    viewModel.setListImages(images: realDataList);
   }
 }
