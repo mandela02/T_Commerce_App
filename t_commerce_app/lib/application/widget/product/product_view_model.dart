@@ -28,12 +28,24 @@ class ProductViewModel extends ChangeNotifier {
     this._selectedCategory = category;
 
     if (_product != null) {
-      final notNullProduct = product!;
+      final notNullProduct = _product!;
       setName(name: notNullProduct.name);
       setDescription(description: notNullProduct.description);
       setOriginalPrice(price: "${notNullProduct.originalPrice}");
       setDiscountPrice(price: "${notNullProduct.discountPrice}");
       setBarCode(barCode: notNullProduct.barCode);
+    }
+    getImages();
+  }
+
+  void getImages() async {
+    if (_product != null) {
+      final notNullProduct = _product!;
+      final dataImages = await _useCase.getAllImage(product: notNullProduct);
+      _selectedImage =
+          dataImages.firstWhere((element) => element.isAvatar).image;
+      _images = dataImages.map((e) => e.image).toList();
+      change();
     }
   }
 
@@ -73,8 +85,12 @@ class ProductViewModel extends ChangeNotifier {
           updateDate: now,
           barCode: _barCode,
           description: _description);
-      if (_selectedCategory != null) {
-        await _useCase.save(product: product, category: _selectedCategory!);
+      if (_selectedCategory != null && _selectedImage != null) {
+        await _useCase.save(
+            product: product,
+            category: _selectedCategory!,
+            avatar: _selectedImage!,
+            images: _images);
       }
     } else {
       Product existProduct = _product!;
@@ -86,8 +102,12 @@ class ProductViewModel extends ChangeNotifier {
           updateDate: now,
           barCode: _barCode,
           description: _description);
-      if (_selectedCategory != null) {
-        await _useCase.update(product: product, category: _selectedCategory!);
+      if (_selectedCategory != null && _selectedImage != null) {
+        await _useCase.update(
+            product: product,
+            category: _selectedCategory!,
+            avatar: _selectedImage!,
+            images: _images);
       }
     }
     Navigator.pop(context);
@@ -126,7 +146,8 @@ extension ProductViewModelGetter on ProductViewModel {
   bool get isSaveButtonEnable {
     return _name.isNotEmpty &&
         _selectedCategory != null &&
-        _originalPrice.isNotEmpty;
+        _originalPrice.isNotEmpty &&
+        _selectedImage != null;
   }
 
   bool get isDeleteButtonVisible {

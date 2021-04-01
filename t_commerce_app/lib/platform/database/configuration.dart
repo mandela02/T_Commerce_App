@@ -6,6 +6,7 @@ abstract class TableName {
   static String categoryTableName = "category";
   static String productTableName = "product";
   static String categoryOfProductTableName = "category_of_product";
+  static String imageOfProductTableName = "image_of_product";
 }
 
 class Configuration {
@@ -55,10 +56,20 @@ class Configuration {
         )
         """;
 
+    String createImageOfProduct = """
+        CREATE TABLE ${TableName.imageOfProductTableName}(
+        id TEXT PRIMARY KEY, 
+        productId TEXT,
+        image BLOB, 
+        isAvatar INTEGER
+        )
+        """;
+
     Batch batch = db.batch();
     batch.execute(createCategoryTable);
     batch.execute(createProductTable);
     batch.execute(createCategoryOfProductTable);
+    batch.execute(createImageOfProduct);
 
     await batch.commit();
   }
