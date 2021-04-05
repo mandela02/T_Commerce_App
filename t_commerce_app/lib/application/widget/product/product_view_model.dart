@@ -99,7 +99,8 @@ class ProductViewModel extends ChangeNotifier {
       }
     } else {
       Product existProduct = _product!;
-      final Product product = Product(existProduct.id,
+      final Product product = Product(
+          id: existProduct.id,
           name: _name,
           originalPrice: originalPrice,
           discountPrice: discountPrice,

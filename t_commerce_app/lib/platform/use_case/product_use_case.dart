@@ -16,7 +16,7 @@ class ProductUseCase implements ProductUseCaseType {
   @override
   Future<List<Category>> getAllCategory() async {
     List<Map<String, dynamic>> maps =
-        await _categoryRepository.getAll(TableName.categoryTableName);
+        await _categoryRepository.getAll(TableName.CATEGORY_TABLE_NAME);
     return maps.map((e) => Category.fromMap(e)).toList();
   }
 
@@ -26,13 +26,13 @@ class ProductUseCase implements ProductUseCaseType {
       required Category category,
       required List<ImageForSaveObject> images,
       required ImageForSaveObject avatar}) async {
-    await _productRepository.insert(product, TableName.productTableName);
+    await _productRepository.insert(product, TableName.PRODUCT_TABLE_NAME);
 
     CategoryOfProduct categoryOfProduct = CategoryOfProduct.create(
         categoryId: category.id, productId: product.id);
 
     await _categoryOfProductRepository.insert(
-        categoryOfProduct, TableName.categoryOfProductTableName);
+        categoryOfProduct, TableName.CATEGORY_OF_PRODUCT_TABLE_NAME);
     await _saveImage(product, images, avatar);
   }
 
@@ -42,8 +42,8 @@ class ProductUseCase implements ProductUseCaseType {
       required Category category,
       required List<ImageForSaveObject> images,
       required ImageForSaveObject avatar}) async {
-    await _productRepository.update(
-        product, "id", product.id, TableName.productTableName);
+    await _productRepository.update(product, CategoryRowName.id.name,
+        product.id, TableName.PRODUCT_TABLE_NAME);
 
     await _updateCategory(product, category);
     await _updateImage(product, images, avatar);
@@ -53,7 +53,9 @@ class ProductUseCase implements ProductUseCaseType {
   Future<List<ImageOfProduct>> getAllImage({required Product product}) async {
     final id = product.id;
     final imageMaps = await _imageOfProductRepository.query(
-        "productId", id, TableName.imageOfProductTableName);
+        ImageOfProductRowName.productId.name,
+        id,
+        TableName.IMAGE_OF_PRODUCT_TABLE_NAME);
     return imageMaps.map((e) => ImageOfProduct.fromMap(e)).toList();
   }
 }
@@ -62,8 +64,9 @@ extension ProductUseCaseExtension on ProductUseCase {
   Future<void> _updateImage(Product product, List<ImageForSaveObject> images,
       ImageForSaveObject avatar) async {
     final existingImage = await getAllImage(product: product);
-    final deleteQueue = existingImage.map((e) => _imageOfProductRepository
-        .delete("id", e.id, TableName.imageOfProductTableName));
+    final deleteQueue = existingImage.map((e) =>
+        _imageOfProductRepository.delete(ImageOfProductRowName.id.name, e.id,
+            TableName.IMAGE_OF_PRODUCT_TABLE_NAME));
     Future.wait(deleteQueue);
     await _saveImage(product, images, avatar);
   }
@@ -77,7 +80,7 @@ extension ProductUseCaseExtension on ProductUseCase {
             isAvatar: e == avatar,
             imageAsset: e.asset))
         .map((e) => _imageOfProductRepository.insert(
-            e, TableName.imageOfProductTableName))
+            e, TableName.IMAGE_OF_PRODUCT_TABLE_NAME))
         .toList();
     Future.wait(list);
   }
@@ -85,13 +88,15 @@ extension ProductUseCaseExtension on ProductUseCase {
   Future<void> _updateCategory(Product product, Category category) async {
     List<Map<String, dynamic>> categoryOfProductMaps =
         await _categoryOfProductRepository.query(
-            "productId", product.id, TableName.categoryOfProductTableName);
+            CategoryOfProductRowName.productId.name,
+            product.id,
+            TableName.CATEGORY_OF_PRODUCT_TABLE_NAME);
 
     List<CategoryOfProduct> categoryOfProducts =
         categoryOfProductMaps.map((e) => CategoryOfProduct.fromMap(e)).toList();
 
     List<Map<String, dynamic>> all = await _categoryOfProductRepository
-        .getAll(TableName.categoryOfProductTableName);
+        .getAll(TableName.CATEGORY_OF_PRODUCT_TABLE_NAME);
 
     if (categoryOfProducts.isNotEmpty) {
       String categoryOfProductId = categoryOfProducts.first.id;
@@ -100,8 +105,11 @@ extension ProductUseCaseExtension on ProductUseCase {
           categoryId: category.id,
           productId: product.id);
 
-      await _categoryOfProductRepository.update(categoryOfProduct, "id",
-          categoryOfProductId, TableName.categoryOfProductTableName);
+      await _categoryOfProductRepository.update(
+          categoryOfProduct,
+          CategoryOfProductRowName.id.name,
+          categoryOfProductId,
+          TableName.CATEGORY_OF_PRODUCT_TABLE_NAME);
     }
   }
 }

@@ -1,12 +1,17 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:t_commerce_app/domain/model/category.dart';
+import 'package:t_commerce_app/domain/model/category_of_product.dart';
+import 'package:t_commerce_app/domain/model/image_of_product.dart';
+import 'package:t_commerce_app/domain/model/product.dart';
 
 abstract class TableName {
-  static String databaseName = "store_database.db";
-  static String categoryTableName = "category";
-  static String productTableName = "product";
-  static String categoryOfProductTableName = "category_of_product";
-  static String imageOfProductTableName = "image_of_product";
+  static const String DATABASE_NAME = "STORE_DATABASE.db";
+  static const String CATEGORY_TABLE_NAME = "CATEGORY_TABLE";
+  static const String PRODUCT_TABLE_NAME = "PRODUCT_TABLE";
+  static const String CATEGORY_OF_PRODUCT_TABLE_NAME =
+      "CATEGORY_OF_PRODUCT_TABLE";
+  static const String IMAGE_OF_PRODUCT_TABLE_NAME = "IMAGE_OF_PRODUCT_TABLE";
 }
 
 class Configuration {
@@ -19,7 +24,7 @@ class Configuration {
   }
 
   Future<Database> openAppDatabase() async {
-    return openDatabase(join(await getDatabasesPath(), TableName.databaseName),
+    return openDatabase(join(await getDatabasesPath(), TableName.DATABASE_NAME),
         onCreate: (db, version) {
       _createTable(db, version);
     }, version: 1);
@@ -27,45 +32,45 @@ class Configuration {
 
   void _createTable(Database db, int newVersion) async {
     String createCategoryTable = """
-        CREATE TABLE ${TableName.categoryTableName} (
-        id TEXT PRIMARY KEY, 
-        name TEXT, 
-        description TEXT, 
-        image BLOB
+        CREATE TABLE ${TableName.CATEGORY_TABLE_NAME} (
+        ${CategoryRowName.id.name} TEXT PRIMARY KEY, 
+        ${CategoryRowName.name.name} TEXT, 
+        ${CategoryRowName.description.name} TEXT, 
+        ${CategoryRowName.image.name} BLOB
         )
         """;
 
     String createProductTable = """
-        CREATE TABLE ${TableName.productTableName}(
-        id TEXT PRIMARY KEY, 
-        name TEXT, 
-        originalPrice INTEGER, 
-        discountPrice INTEGER, 
-        createDate INTEGER, 
-        updateDate INTEGER, 
-        barCode TEXT, 
-        description TEXT
+        CREATE TABLE ${TableName.PRODUCT_TABLE_NAME}(
+        ${ProductRowName.id.name} TEXT PRIMARY KEY, 
+        ${ProductRowName.name.name} TEXT, 
+        ${ProductRowName.originalPrice.name} INTEGER, 
+        ${ProductRowName.discountPrice.name} INTEGER, 
+        ${ProductRowName.createDate.name} INTEGER, 
+        ${ProductRowName.updateDate.name} INTEGER, 
+        ${ProductRowName.barCode.name} TEXT, 
+        ${ProductRowName.description.name} TEXT
         )
         """;
 
     String createCategoryOfProductTable = """
-        CREATE TABLE ${TableName.categoryOfProductTableName}(
-        id TEXT PRIMARY KEY, 
-        categoryId TEXT, 
-        productId TEXT
+        CREATE TABLE ${TableName.CATEGORY_OF_PRODUCT_TABLE_NAME}(
+        ${CategoryOfProductRowName.id.name} TEXT PRIMARY KEY, 
+        ${CategoryOfProductRowName.categoryId.name} TEXT, 
+        ${CategoryOfProductRowName.productId.name} TEXT
         )
         """;
 
     String createImageOfProduct = """
-        CREATE TABLE ${TableName.imageOfProductTableName}(
-        id TEXT PRIMARY KEY, 
-        productId TEXT,
-        image BLOB, 
-        isAvatar INTEGER,
-        identifier TEXT,
-        name TEXT,
-        originalWidth INTEGER,
-        originalHeight INTEGER
+        CREATE TABLE ${TableName.IMAGE_OF_PRODUCT_TABLE_NAME}(
+        ${ImageOfProductRowName.id.name} TEXT PRIMARY KEY, 
+        ${ImageOfProductRowName.productId.name} TEXT,
+        ${ImageOfProductRowName.image.name} BLOB, 
+        ${ImageOfProductRowName.isAvatar.name} INTEGER,
+        ${ImageOfProductRowName.identifier.name} TEXT,
+        ${ImageOfProductRowName.name.name} TEXT,
+        ${ImageOfProductRowName.originalWidth.name} INTEGER,
+        ${ImageOfProductRowName.originalHeight.name} INTEGER
         )
         """;
 

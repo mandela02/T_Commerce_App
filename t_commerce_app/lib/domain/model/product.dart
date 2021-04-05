@@ -1,6 +1,40 @@
 import 'package:t_commerce_app/domain/model/model_type.dart';
 import 'package:uuid/uuid.dart';
 
+enum ProductRowName {
+  id,
+  name,
+  originalPrice,
+  discountPrice,
+  createDate,
+  updateDate,
+  barCode,
+  description
+}
+
+extension ProductRowNameExtension on ProductRowName {
+  String get name {
+    switch (this) {
+      case ProductRowName.id:
+        return "id";
+      case ProductRowName.name:
+        return "name";
+      case ProductRowName.originalPrice:
+        return "originalPrice";
+      case ProductRowName.discountPrice:
+        return "discountPrice";
+      case ProductRowName.createDate:
+        return "createDate";
+      case ProductRowName.updateDate:
+        return "updateDate";
+      case ProductRowName.barCode:
+        return "barCode";
+      case ProductRowName.description:
+        return "description";
+    }
+  }
+}
+
 class Product implements ModelType {
   String id = Uuid().v4();
   String name = "";
@@ -14,8 +48,9 @@ class Product implements ModelType {
 
   String description = "";
 
-  Product(this.id,
-      {required this.name,
+  Product(
+      {required this.id,
+      required this.name,
       required this.originalPrice,
       required this.discountPrice,
       required this.createDate,
@@ -35,25 +70,26 @@ class Product implements ModelType {
   @override
   Map<String, dynamic> toMap() {
     return {
-      "id": id,
-      "name": name,
-      "originalPrice": originalPrice,
-      "discountPrice": discountPrice,
-      "createDate": createDate,
-      "updateDate": updateDate,
-      "barCode": barCode,
-      "description": description,
+      ProductRowName.id.name: id,
+      ProductRowName.name.name: name,
+      ProductRowName.originalPrice.name: originalPrice,
+      ProductRowName.discountPrice.name: discountPrice,
+      ProductRowName.createDate.name: createDate,
+      ProductRowName.updateDate.name: updateDate,
+      ProductRowName.barCode.name: barCode,
+      ProductRowName.description.name: description,
     };
   }
 
   static Product fromMap(Map<String, dynamic> map) {
-    return Product(map["id"],
-        name: map["name"],
-        originalPrice: map["originalPrice"],
-        discountPrice: map["discountPrice"],
-        createDate: map["createDate"],
-        updateDate: map["updateDate"],
-        barCode: map["barCode"],
-        description: map["description"]);
+    return Product(
+        id: map[ProductRowName.id.name],
+        name: map[ProductRowName.name.name],
+        originalPrice: map[ProductRowName.originalPrice.name],
+        discountPrice: map[ProductRowName.discountPrice.name],
+        createDate: map[ProductRowName.createDate.name],
+        updateDate: map[ProductRowName.updateDate.name],
+        barCode: map[ProductRowName.barCode.name],
+        description: map[ProductRowName.description.name]);
   }
 }
