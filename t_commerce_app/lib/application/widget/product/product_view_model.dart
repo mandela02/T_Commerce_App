@@ -50,6 +50,11 @@ class ProductViewModel extends ChangeNotifier {
       _images = imageList;
       _selectedImage =
           ImageObject(memory: selected.memoryImage, asset: selected.assetImage);
+      _assets = imageList
+          .map((e) => e.asset)
+          .where((element) => element != null)
+          .map((e) => e!)
+          .toList();
       change();
     }
   }

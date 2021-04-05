@@ -29,6 +29,7 @@ class CategoryViewModel extends ChangeNotifier {
     if (_category != null) {
       final products = await _useCase.getAllProduct(category: _category!);
       _products = products;
+      notifyListeners();
     }
   }
 

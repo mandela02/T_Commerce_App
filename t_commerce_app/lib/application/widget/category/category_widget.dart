@@ -133,6 +133,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
 
     if (viewModel.isDeleteButtonVisible) {
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             "Products in this category: ${viewModel.products.length} product",
