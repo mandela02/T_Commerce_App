@@ -1,7 +1,6 @@
-import 'dart:typed_data';
-
 import 'package:t_commerce_app/domain/model/category.dart';
 import 'package:t_commerce_app/domain/model/category_of_product.dart';
+import 'package:t_commerce_app/domain/model/image_object.dart';
 import 'package:t_commerce_app/domain/model/image_of_product.dart';
 import 'package:t_commerce_app/domain/model/product.dart';
 import 'package:t_commerce_app/domain/use_case/product_use_case_type.dart';
@@ -25,8 +24,8 @@ class ProductUseCase implements ProductUseCaseType {
   Future<void> save(
       {required Product product,
       required Category category,
-      required List<Uint8List> images,
-      required Uint8List avatar}) async {
+      required List<ImageForSaveObject> images,
+      required ImageForSaveObject avatar}) async {
     await _productRepository.insert(product, TableName.productTableName);
 
     CategoryOfProduct categoryOfProduct = CategoryOfProduct.create(
@@ -41,8 +40,8 @@ class ProductUseCase implements ProductUseCaseType {
   Future<void> update(
       {required Product product,
       required Category category,
-      required List<Uint8List> images,
-      required Uint8List avatar}) async {
+      required List<ImageForSaveObject> images,
+      required ImageForSaveObject avatar}) async {
     await _productRepository.update(
         product, "id", product.id, TableName.productTableName);
 
@@ -60,8 +59,8 @@ class ProductUseCase implements ProductUseCaseType {
 }
 
 extension ProductUseCaseExtension on ProductUseCase {
-  Future<void> _updateImage(
-      Product product, List<Uint8List> images, Uint8List avatar) async {
+  Future<void> _updateImage(Product product, List<ImageForSaveObject> images,
+      ImageForSaveObject avatar) async {
     final existingImage = await getAllImage(product: product);
     final deleteQueue = existingImage.map((e) => _imageOfProductRepository
         .delete("id", e.id, TableName.imageOfProductTableName));
@@ -69,12 +68,14 @@ extension ProductUseCaseExtension on ProductUseCase {
     await _saveImage(product, images, avatar);
   }
 
-  Future<void> _saveImage(
-      Product product, List<Uint8List> images, Uint8List avatar) async {
+  Future<void> _saveImage(Product product, List<ImageForSaveObject> images,
+      ImageForSaveObject avatar) async {
     final list = images
-        .map((data) => ImageOfProduct.create(
-            productId: product.id, image: data, isAvatar: data == avatar))
-        .toList()
+        .map((e) => ImageOfProduct.create(
+            productId: product.id,
+            image: e.memory,
+            isAvatar: e == avatar,
+            imageAsset: e.asset))
         .map((e) => _imageOfProductRepository.insert(
             e, TableName.imageOfProductTableName))
         .toList();

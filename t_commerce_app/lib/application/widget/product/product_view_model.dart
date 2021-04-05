@@ -1,7 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:t_commerce_app/domain/model/category.dart';
+import 'package:t_commerce_app/domain/model/image_object.dart';
 import 'package:t_commerce_app/domain/model/product.dart';
 import 'package:t_commerce_app/domain/use_case/product_use_case_type.dart';
 import 'package:t_commerce_app/domain/use_case/use_case_provider.dart';
@@ -10,9 +10,10 @@ class ProductViewModel extends ChangeNotifier {
   ProductUseCaseType _useCase = UseCaseProvider().getProductUseCase();
 
   List<Category> _categories = [];
-  List<Uint8List> _images = [];
+  List<ImageForSaveObject> _images = [];
+  List<Asset> _assets = [];
 
-  Uint8List? _selectedImage;
+  ImageForSaveObject? _selectedImage;
 
   Category? _selectedCategory;
   Product? _product;
@@ -42,9 +43,13 @@ class ProductViewModel extends ChangeNotifier {
     if (_product != null) {
       final notNullProduct = _product!;
       final dataImages = await _useCase.getAllImage(product: notNullProduct);
-      _selectedImage =
-          dataImages.firstWhere((element) => element.isAvatar).image;
-      _images = dataImages.map((e) => e.image).toList();
+      final imageList = dataImages
+          .map((e) => ImageForSaveObject(memory: e.image, asset: e.imageAsset))
+          .toList();
+      final selected = dataImages.firstWhere((element) => element.isAvatar);
+      _selectedImage = ImageForSaveObject(
+          memory: selected.image, asset: selected.imageAsset);
+      _images = imageList;
       change();
     }
   }
@@ -162,8 +167,9 @@ extension ProductViewModelGetter on ProductViewModel {
     return _selectedCategory;
   }
 
-  List<Uint8List> get images => _images;
-  Uint8List? get selectedImage => _selectedImage;
+  List<ImageForSaveObject> get images => _images;
+  ImageForSaveObject? get selectedImage => _selectedImage;
+  List<Asset> get assets => _assets;
 }
 
 extension ProductViewModelSetter on ProductViewModel {
@@ -197,14 +203,20 @@ extension ProductViewModelSetter on ProductViewModel {
     change();
   }
 
-  void setSelectedImage({required Uint8List? image}) {
+  void setSelectedImage({required ImageForSaveObject? image}) {
     _selectedImage = image;
     change();
   }
 
-  void setListImages({required List<Uint8List> images}) {
+  void setListImages({required List<ImageForSaveObject> images}) {
     _images = images;
     _updateSelectedImage();
+    change();
+  }
+
+  void setAssets({required List<Asset> images}) async {
+    _assets = images;
+    await _fromAssetToImage();
     change();
   }
 }
@@ -217,5 +229,20 @@ extension ProductViewModelFunction on ProductViewModel {
     } else if (images.isEmpty) {
       _selectedImage = null;
     }
+  }
+
+  Future<void> _fromAssetToImage() async {
+    final resultList = _assets;
+    final dataList = resultList.map(
+      (e) async {
+        final data = await e.getByteData();
+        return ImageForSaveObject(
+            asset: e,
+            memory: data.buffer
+                .asUint8List(data.offsetInBytes, data.lengthInBytes));
+      },
+    ).toList();
+    final realDataList = await Future.wait(dataList);
+    setListImages(images: realDataList);
   }
 }

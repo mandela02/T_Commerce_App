@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +10,7 @@ import 'package:t_commerce_app/application/widget/reusable_wigdet/delete_button_
 import 'package:t_commerce_app/application/widget/reusable_wigdet/intput_text_field_widget.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/round_button_widget.dart';
 import 'package:t_commerce_app/domain/model/category.dart';
+import 'package:t_commerce_app/domain/model/image_object.dart';
 
 class ProductWidget extends StatefulWidget {
   @override
@@ -26,8 +25,6 @@ class _ProductWidgetState extends State<ProductWidget> {
   late TextEditingController _originalPriceTextController;
   late TextEditingController _discountTextController;
   late TextEditingController _descriptionTextController;
-
-  List<Asset> _images = [];
 
   @override
   void initState() {
@@ -365,7 +362,7 @@ extension ProductWidgetFunction on _ProductWidgetState {
   }
 
   Widget createImageWidget(
-      {required Uint8List? image,
+      {required ImageForSaveObject? image,
       required bool isInList,
       required double imageSize}) {
     final viewModel = context.watch<ProductViewModel>();
@@ -401,7 +398,7 @@ extension ProductWidgetFunction on _ProductWidgetState {
                 )
               : Image(
                   fit: BoxFit.cover,
-                  image: MemoryImage(image),
+                  image: MemoryImage(image.memory),
                 ),
         ),
       ),
@@ -418,7 +415,7 @@ extension ProductWidgetFunction on _ProductWidgetState {
       resultList = await MultiImagePicker.pickImages(
         maxImages: 300,
         enableCamera: true,
-        selectedAssets: _images,
+        selectedAssets: viewModel.assets,
         cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
         materialOptions: MaterialOptions(
           actionBarColor: "#abcdef",
@@ -433,17 +430,6 @@ extension ProductWidgetFunction on _ProductWidgetState {
       print(error);
     }
     if (!mounted) return;
-
-    final dataList = resultList.map(
-      (e) async {
-        final data = await e.getByteData();
-        return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-      },
-    ).toList();
-
-    final realDataList = await Future.wait(dataList);
-
-    _images = resultList;
-    viewModel.setListImages(images: realDataList);
+    viewModel.setAssets(images: resultList);
   }
 }

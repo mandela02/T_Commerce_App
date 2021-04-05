@@ -61,7 +61,11 @@ class Configuration {
         id TEXT PRIMARY KEY, 
         productId TEXT,
         image BLOB, 
-        isAvatar INTEGER
+        isAvatar INTEGER,
+        identifier TEXT,
+        name TEXT,
+        originalWidth INTEGER,
+        originalHeight INTEGER
         )
         """;
 
