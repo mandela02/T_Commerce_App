@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/application/widget/products_list/products_list_view_model.dart';
-import 'package:t_commerce_app/domain/model/category.dart';
-import 'package:t_commerce_app/domain/model/product.dart';
+import 'package:t_commerce_app/application/widget/reusable_wigdet/reusable_product_list_view_widget.dart';
 
 class ProductsListWidget extends StatefulWidget {
   @override
@@ -26,77 +25,24 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
     return Scrollbar(
       child: Container(
         color: Colors.grey[100],
-        child: ListView.builder(
-          itemCount: products.length,
-          itemBuilder: (context, index) {
-            Product product = products[index];
-
-            return FutureBuilder(
-              future: viewModel.getCategory(product: product),
-              builder:
-                  (BuildContext context, AsyncSnapshot<Category?> category) {
-                if (category.hasError) {
-                  return Text("an unexpected error has occurred");
-                } else if (category.hasData) {
-                  return ProductCardWidget(
-                    category: category.data,
-                    product: product,
-                    onCellTap: () async {
-                      await Navigator.pushNamed(
-                        context,
-                        AppRouter.PRODUCT,
-                        arguments: ProductsListArguments(
-                          product: product,
-                          category: category.data,
-                        ),
-                      );
-                      viewModel.getData();
-                    },
+        child: Column(
+          children: [
+            Expanded(
+              child: ReusableProductListViewWidget(
+                products: products,
+                onCellTap: (product) async {
+                  await Navigator.pushNamed(
+                    context,
+                    AppRouter.PRODUCT,
+                    arguments: product,
                   );
-                } else {
-                  return Text("Loading data");
-                }
-              },
-              initialData: null,
-            );
-          },
+                  viewModel.getData();
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
-}
-
-class ProductCardWidget extends StatelessWidget {
-  final Category? category;
-  final Product product;
-  final Function onCellTap;
-
-  const ProductCardWidget(
-      {Key? key,
-      required this.category,
-      required this.product,
-      required this.onCellTap})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(8),
-      shadowColor: Colors.black,
-      color: Colors.white,
-      child: ListTile(
-        onTap: () => onCellTap(),
-        title: Text(product.name),
-        subtitle: Text(category?.categoryName ?? ""),
-        isThreeLine: true,
-      ),
-    );
-  }
-}
-
-class ProductsListArguments {
-  final Product? product;
-  final Category? category;
-
-  ProductsListArguments({required this.product, required this.category});
 }

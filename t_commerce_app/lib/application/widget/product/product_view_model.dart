@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:t_commerce_app/domain/model/category.dart';
 import 'package:t_commerce_app/domain/model/image_object.dart';
@@ -50,6 +50,11 @@ class ProductViewModel extends ChangeNotifier {
       _images = imageList;
       _selectedImage =
           ImageObject(memory: selected.memoryImage, asset: selected.assetImage);
+      _assets = imageList
+          .map((e) => e.asset)
+          .where((element) => element != null)
+          .map((e) => e!)
+          .toList();
       change();
     }
   }

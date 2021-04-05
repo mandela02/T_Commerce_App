@@ -4,11 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/application/widget/category/action_sheet_result.dart';
 import 'package:t_commerce_app/application/widget/category/category_view_model.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/alert_dialog.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/delete_button_widget.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/intput_text_field_widget.dart';
+import 'package:t_commerce_app/application/widget/reusable_wigdet/reusable_product_list_view_widget.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/round_button_widget.dart';
 
 class CategoryWidget extends StatefulWidget {
@@ -105,7 +107,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
           isMultiLine: false,
           size: _commonFontSize,
           controller: _nameTextController,
-          keyboard: TextInputType.text,
+          keyboard: TextInputType.name,
           onTextChange: (name) => viewModel.setName(name: name)),
     );
   }
@@ -119,7 +121,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
         isMultiLine: true,
         size: _commonFontSize,
         controller: _descriptionTextController,
-        keyboard: TextInputType.text,
+        keyboard: TextInputType.multiline,
         onTextChange: (description) =>
             viewModel.setDescription(description: description),
       ),
@@ -127,18 +129,37 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   }
 
   Widget get _listOfProducts {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          "Products in this category: 0 product",
-          style: TextStyle(
-            fontSize: _commonFontSize,
+    final viewModel = context.watch<CategoryViewModel>();
+
+    if (viewModel.isDeleteButtonVisible) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            "Products in this category: ${viewModel.products.length} product",
+            style: TextStyle(
+              fontSize: _commonFontSize,
+            ),
+            textAlign: TextAlign.start,
           ),
-          textAlign: TextAlign.start,
+          ReusableProductListViewWidget(
+              products: viewModel.products,
+              onCellTap: (product) async {
+                await Navigator.pushNamed(context, AppRouter.PRODUCT,
+                    arguments: product);
+                viewModel.getProducts();
+              })
+        ],
+      );
+    } else {
+      return Text(
+        "Create a new product",
+        style: TextStyle(
+          fontSize: _commonFontSize,
         ),
-      ],
-    );
+        textAlign: TextAlign.start,
+      );
+    }
   }
 
   Widget get _actionSheet {
@@ -185,44 +206,43 @@ class _CategoryWidgetState extends State<CategoryWidget> {
             currentFocus.unfocus();
           }
         },
-        child: SafeArea(
-          child: Container(
-            color: Colors.white,
-            height: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Scrollbar(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        SizedBox(
-                          height: 8.0,
-                        ),
-                        _headerField,
-                        SizedBox(
-                          height: 10,
-                        ),
-                        _descriptionField,
-                        SizedBox(
-                          height: 10,
-                        ),
-                        _listOfProducts,
-                      ],
-                    ),
+        child: Container(
+          color: Colors.grey[100],
+          height: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      SizedBox(
+                        height: 8.0,
+                      ),
+                      _headerField,
+                      SizedBox(
+                        height: 10,
+                      ),
+                      _descriptionField,
+                      SizedBox(
+                        height: 20,
+                      ),
+                      _listOfProducts,
+                    ],
                   ),
-                  Center(
-                    child: RoundButtonWidget(
-                        title: viewModel.buttonTitle,
-                        backgroundColor: viewModel.isSaveButtonEnable
-                            ? Colors.blue
-                            : Colors.grey,
-                        onClick: viewModel.isSaveButtonEnable
-                            ? () => viewModel.save(context)
-                            : null),
-                  ),
-                ],
-              ),
+                ),
+                Center(
+                  child: RoundButtonWidget(
+                      title: viewModel.buttonTitle,
+                      backgroundColor: viewModel.isSaveButtonEnable
+                          ? Colors.blue
+                          : Colors.grey,
+                      onClick: viewModel.isSaveButtonEnable
+                          ? () => viewModel.save(context)
+                          : null),
+                ),
+              ],
             ),
           ),
         ),
