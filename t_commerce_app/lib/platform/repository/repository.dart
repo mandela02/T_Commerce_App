@@ -8,7 +8,7 @@ abstract class RepositoryType<T extends ModelType> {
   Future<void> delete(String field, String arg, String table);
   Future<void> update(T object, String field, String arg, String table);
   Future<List<Map<String, dynamic>>> query(
-      dynamic field, String arg, String table);
+      String field, dynamic arg, String table);
 }
 
 class Repository<T extends ModelType> implements RepositoryType {
@@ -58,7 +58,7 @@ class Repository<T extends ModelType> implements RepositoryType {
 
   @override
   Future<List<Map<String, dynamic>>> query(
-      dynamic field, String arg, String table) async {
+      String field, dynamic arg, String table) async {
     final Database db = await configuration.database;
     final List<Map<String, dynamic>> maps = await db.query(
       table,

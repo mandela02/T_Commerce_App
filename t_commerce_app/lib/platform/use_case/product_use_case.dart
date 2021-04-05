@@ -58,6 +58,12 @@ class ProductUseCase implements ProductUseCaseType {
         TableName.IMAGE_OF_PRODUCT_TABLE_NAME);
     return imageMaps.map((e) => ImageOfProduct.fromMap(e)).toList();
   }
+
+  @override
+  Future<void> delete({required Product product}) {
+    return _productRepository.delete(
+        ProductRowName.id.name, product.id, TableName.PRODUCT_TABLE_NAME);
+  }
 }
 
 extension ProductUseCaseExtension on ProductUseCase {

@@ -40,7 +40,7 @@ class Product implements ModelType {
   String name = "";
 
   int originalPrice = 0;
-  int discountPrice = 0;
+  int? discountPrice;
 
   int createDate = 0;
   int updateDate = 0;

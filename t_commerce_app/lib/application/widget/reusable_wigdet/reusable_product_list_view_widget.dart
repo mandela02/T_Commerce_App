@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:t_commerce_app/application/widget/products_list/product_card_widget.dart';
+import 'package:t_commerce_app/application/widget/reusable_wigdet/product_card_widget.dart';
 import 'package:t_commerce_app/domain/model/product_and_category.dart';
 
 class ReusableProductListViewWidget extends StatelessWidget {

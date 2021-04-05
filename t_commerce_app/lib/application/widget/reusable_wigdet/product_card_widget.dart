@@ -32,8 +32,22 @@ class ProductCardWidget extends StatelessWidget {
           height: 40,
           width: 40,
           child: Image(
+            fit: BoxFit.cover,
             image: MemoryImage(image.memory),
           ),
+        ),
+        trailing: Column(
+          children: [
+            Text(
+              "${product.originalPrice}\$",
+              style: product.discountPrice == null
+                  ? null
+                  : TextStyle(decoration: TextDecoration.lineThrough),
+            ),
+            Text(product.discountPrice == null
+                ? ""
+                : "${product.discountPrice}\$"),
+          ],
         ),
         isThreeLine: true,
       ),

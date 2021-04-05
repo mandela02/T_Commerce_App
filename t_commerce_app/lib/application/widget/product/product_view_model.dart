@@ -72,7 +72,7 @@ class ProductViewModel extends ChangeNotifier {
   void saveProduct(BuildContext context) async {
     int now = DateTime.now().millisecondsSinceEpoch;
     int originalPrice = 0;
-    int discountPrice = 0;
+    int? discountPrice;
 
     try {
       originalPrice = int.parse(_originalPrice);
@@ -83,7 +83,7 @@ class ProductViewModel extends ChangeNotifier {
     try {
       discountPrice = int.parse(_discountPrice);
     } catch (e) {
-      discountPrice = discountPrice;
+      discountPrice = null;
     }
 
     if (_product == null) {
@@ -218,5 +218,12 @@ extension ProductViewModelFunction on ProductViewModel {
     ).toList();
     final realDataList = await Future.wait(dataList);
     setListImages(images: realDataList);
+  }
+
+  Future<void> delete(BuildContext context) async {
+    if (_product != null) {
+      await _useCase.delete(product: _product!);
+      Navigator.pop(context);
+    }
   }
 }

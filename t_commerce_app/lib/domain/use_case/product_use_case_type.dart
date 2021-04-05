@@ -16,4 +16,5 @@ abstract class ProductUseCaseType {
       required List<ImageObject> images,
       required ImageObject avatar});
   Future<List<ImageOfProduct>> getAllImage({required Product product});
+  Future<void> delete({required Product product});
 }

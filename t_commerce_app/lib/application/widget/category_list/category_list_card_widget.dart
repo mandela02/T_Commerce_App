@@ -12,6 +12,7 @@ class CategoryListCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 0,
       margin: EdgeInsets.all(8),
       shadowColor: Colors.black,
       color: Colors.white,

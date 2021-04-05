@@ -6,6 +6,7 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/application/widget/product/product_view_model.dart';
+import 'package:t_commerce_app/application/widget/reusable_wigdet/alert_dialog.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/delete_button_widget.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/intput_text_field_widget.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/round_button_widget.dart';
@@ -58,10 +59,10 @@ class _ProductWidgetState extends State<ProductWidget> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("New Product"),
+        title: Text(viewModel.appBarTitle),
         actions: viewModel.isDeleteButtonVisible
             ? [
-                DeleteButtonWidget(onClick: () => {}),
+                DeleteButtonWidget(onClick: () => _delete()),
               ]
             : [],
       ),
@@ -280,7 +281,7 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
               ),
             ),
             CupertinoButton(
-              child: Text("Select Image"),
+              child: Text("Select Image* (maximum 6 image)"),
               onPressed: () => loadAssets(),
             ),
           ],
@@ -410,16 +411,15 @@ extension ProductWidgetFunction on _ProductWidgetState {
 
     List<Asset> resultList = <Asset>[];
     String error = 'No Error Detected';
-    print("load");
     try {
       resultList = await MultiImagePicker.pickImages(
-        maxImages: 300,
+        maxImages: 6,
         enableCamera: true,
         selectedAssets: viewModel.assets,
         cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
         materialOptions: MaterialOptions(
           actionBarColor: "#abcdef",
-          actionBarTitle: "Example App",
+          actionBarTitle: "T Commerce App",
           allViewTitle: "All Photos",
           useDetailsView: false,
           selectCircleStrokeColor: "#000000",
@@ -431,5 +431,28 @@ extension ProductWidgetFunction on _ProductWidgetState {
     }
     if (!mounted) return;
     viewModel.setAssets(images: resultList);
+  }
+
+  Future<void> _delete() async {
+    final viewModel = context.read<ProductViewModel>();
+    dynamic pop = await showDialog(
+      context: this.context,
+      builder: (context) {
+        return CustomAlertDialog(
+          title: "Delete this product?",
+          content:
+              "Are you sure that you want to delete this product?\nThis action can not be reverse!",
+          successButtonTitle: "Delete",
+          cancelButtonTitle: "Cancel",
+        );
+      },
+    );
+
+    if (pop != null) {
+      AlertResult result = pop as AlertResult;
+      if (pop == AlertResult.success) {
+        await viewModel.delete(context);
+      }
+    }
   }
 }
