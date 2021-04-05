@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:t_commerce_app/domain/model/category.dart';
+import 'package:t_commerce_app/domain/model/product_and_category.dart';
 import 'package:t_commerce_app/domain/use_case/category_use_case_type.dart';
 import 'package:t_commerce_app/domain/use_case/use_case_provider.dart';
 
@@ -13,37 +14,38 @@ class CategoryViewModel extends ChangeNotifier {
   String _description = "";
   Uint8List? _image;
 
+  List<ProductAndCategory> _products = [];
+
   CategoryViewModel({Category? category}) {
     this._category = category;
     this._useCase = UseCaseProvider().getCategoryUseCase();
     setName(name: _category?.categoryName ?? "");
     setDescription(description: _category?.description ?? "");
     setFile(image: _category?.memoryImage);
+    getProducts();
   }
 
-  Uint8List? get image {
-    return _image;
+  Future<void> getProducts() async {
+    if (_category != null) {
+      final products = await _useCase.getAllProduct(category: _category!);
+      _products = products;
+    }
   }
 
-  Category? get category {
-    return _category;
-  }
+  List<ProductAndCategory> get products => _products;
 
-  String get buttonTitle {
-    return _category == null ? "Create" : "Update";
-  }
+  Uint8List? get image => _image;
 
-  String get appBarTitle {
-    return _category == null ? "New category" : _category!.categoryName;
-  }
+  Category? get category => _category;
 
-  bool get isSaveButtonEnable {
-    return _name.isNotEmpty;
-  }
+  String get buttonTitle => _category == null ? "Create" : "Update";
 
-  bool get isDeleteButtonVisible {
-    return _category != null;
-  }
+  String get appBarTitle =>
+      _category == null ? "New category" : _category!.categoryName;
+
+  bool get isSaveButtonEnable => _name.isNotEmpty;
+
+  bool get isDeleteButtonVisible => _category != null;
 
   void save(BuildContext context) async {
     if (_category == null) {

@@ -33,10 +33,7 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
             await Navigator.pushNamed(
               context,
               AppRouter.PRODUCT,
-              arguments: ProductsListArguments(
-                product: product.product,
-                category: product.category,
-              ),
+              arguments: product,
             );
             viewModel.getData();
           },
@@ -61,6 +58,7 @@ class ProductCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 0,
       margin: EdgeInsets.all(8),
       shadowColor: Colors.black,
       color: Colors.white,
@@ -72,11 +70,4 @@ class ProductCardWidget extends StatelessWidget {
       ),
     );
   }
-}
-
-class ProductsListArguments {
-  final Product product;
-  final Category category;
-
-  ProductsListArguments({required this.product, required this.category});
 }
