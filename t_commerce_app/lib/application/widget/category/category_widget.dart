@@ -133,7 +133,6 @@ class _CategoryWidgetState extends State<CategoryWidget> {
 
     if (viewModel.isDeleteButtonVisible) {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             "Products in this category: ${viewModel.products.length} product",
@@ -142,15 +141,13 @@ class _CategoryWidgetState extends State<CategoryWidget> {
             ),
             textAlign: TextAlign.start,
           ),
-          Expanded(
-            child: ReusableProductListViewWidget(
-                products: viewModel.products,
-                onCellTap: (product) async {
-                  await Navigator.pushNamed(context, AppRouter.PRODUCT,
-                      arguments: product);
-                  viewModel.getProducts();
-                }),
-          )
+          ReusableProductListViewWidget(
+              products: viewModel.products,
+              onCellTap: (product) async {
+                await Navigator.pushNamed(context, AppRouter.PRODUCT,
+                    arguments: product);
+                viewModel.getProducts();
+              })
         ],
       );
     } else {
@@ -208,15 +205,16 @@ class _CategoryWidgetState extends State<CategoryWidget> {
             currentFocus.unfocus();
           }
         },
-        child: SafeArea(
-          child: Container(
-            color: Colors.white,
-            height: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Container(
+          color: Colors.grey[100],
+          height: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: SafeArea(
             child: Column(
               children: [
                 Expanded(
-                  child: Column(
+                  child: ListView(
+                    shrinkWrap: true,
                     children: [
                       SizedBox(
                         height: 8.0,
@@ -227,9 +225,9 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                       ),
                       _descriptionField,
                       SizedBox(
-                        height: 10,
+                        height: 20,
                       ),
-                      //_listOfProducts,
+                      _listOfProducts,
                     ],
                   ),
                 ),

@@ -12,6 +12,8 @@ class ReusableProductListViewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      shrinkWrap: true,
+      primary: true,
       itemCount: products.length,
       itemBuilder: (context, index) {
         final product = products[index];
