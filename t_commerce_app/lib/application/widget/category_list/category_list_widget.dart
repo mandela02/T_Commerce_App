@@ -18,6 +18,61 @@ class _CategoryListWidgetState extends State<CategoryListWidget> {
     viewModel.getData();
   }
 
+  Widget get gridView {
+    final viewModel = context.watch<CategoryListViewModel>();
+    final categories = viewModel.categories;
+
+    var size = MediaQuery.of(context).size;
+
+    /*24 is for notification bar on Android*/
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 8;
+    final double itemWidth = size.width / 2;
+
+    return GridView.count(
+      crossAxisCount: 2,
+      childAspectRatio: (itemWidth / itemHeight),
+      children: categories
+          .map(
+            (e) => CategoryListCardWidget(
+              category: e,
+              onTap: () async {
+                await Navigator.pushNamed(
+                  context,
+                  AppRouter.CATEGORY,
+                  arguments: e,
+                );
+                viewModel.getData();
+              },
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget get listView {
+    final viewModel = context.watch<CategoryListViewModel>();
+    final categories = viewModel.categories;
+
+    return ListView.builder(
+      itemCount: categories.length,
+      itemBuilder: (context, index) {
+        Category category = categories[index];
+        return CategoryListCardWidget(
+          category: category,
+          onTap: () async {
+            await Navigator.pushNamed(
+              context,
+              AppRouter.CATEGORY,
+              arguments: category,
+            );
+
+            viewModel.getData();
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<CategoryListViewModel>();
@@ -26,24 +81,7 @@ class _CategoryListWidgetState extends State<CategoryListWidget> {
     return Scrollbar(
       child: Container(
         color: Colors.grey[100],
-        child: ListView.builder(
-          itemCount: categories.length,
-          itemBuilder: (context, index) {
-            Category category = categories[index];
-            return CategoryListCardWidget(
-              category: category,
-              onTap: () async {
-                await Navigator.pushNamed(
-                  context,
-                  AppRouter.CATEGORY,
-                  arguments: category,
-                );
-
-                viewModel.getData();
-              },
-            );
-          },
-        ),
+        child: gridView,
       ),
     );
   }

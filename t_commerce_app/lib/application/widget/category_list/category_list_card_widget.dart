@@ -18,7 +18,11 @@ class CategoryListCardWidget extends StatelessWidget {
       child: ListTile(
         onTap: () => onTap(),
         title: Text(category.categoryName),
-        subtitle: Text(category.description),
+        subtitle: Text(
+          category.description,
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+        ),
         leading: category.memoryImage == null
             ? Icon(Icons.category)
             : CircleAvatar(
