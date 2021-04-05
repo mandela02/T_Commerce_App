@@ -46,7 +46,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   void _initController() {
     final viewModel = context.read<CategoryViewModel>();
     _nameTextController =
-        TextEditingController(text: viewModel.category?.name ?? "");
+        TextEditingController(text: viewModel.category?.categoryName ?? "");
     _descriptionTextController =
         TextEditingController(text: viewModel.category?.description ?? "");
   }

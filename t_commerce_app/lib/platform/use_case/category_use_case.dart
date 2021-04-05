@@ -8,18 +8,19 @@ class CategoryUseCase implements CategoryUseCaseType {
 
   @override
   Future<void> add(Category category) {
-    return _repository.insert(category, TableName.categoryTableName);
+    return _repository.insert(category, TableName.CATEGORY_TABLE_NAME);
   }
 
   @override
   Future<void> remove(Category category) {
-    return _repository.delete("id", category.id, TableName.categoryTableName);
+    return _repository.delete(
+        CategoryRowName.id.name, category.id, TableName.CATEGORY_TABLE_NAME);
   }
 
   @override
   Future<void> update(Category category) {
     // TODO: implement update
-    return _repository.update(
-        category, "id", category.id, TableName.categoryTableName);
+    return _repository.update(category, CategoryRowName.id.name, category.id,
+        TableName.CATEGORY_TABLE_NAME);
   }
 }

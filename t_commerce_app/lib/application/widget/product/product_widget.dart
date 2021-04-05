@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:t_commerce_app/application/app/app_router.dart';
 import 'package:t_commerce_app/application/widget/product/product_view_model.dart';
@@ -9,6 +10,7 @@ import 'package:t_commerce_app/application/widget/reusable_wigdet/delete_button_
 import 'package:t_commerce_app/application/widget/reusable_wigdet/intput_text_field_widget.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/round_button_widget.dart';
 import 'package:t_commerce_app/domain/model/category.dart';
+import 'package:t_commerce_app/domain/model/image_object.dart';
 
 class ProductWidget extends StatefulWidget {
   @override
@@ -17,6 +19,7 @@ class ProductWidget extends StatefulWidget {
 
 class _ProductWidgetState extends State<ProductWidget> {
   double _commonFontSize = 12;
+
   late TextEditingController _barCodeTextController;
   late TextEditingController _nameTextController;
   late TextEditingController _originalPriceTextController;
@@ -41,10 +44,74 @@ class _ProductWidgetState extends State<ProductWidget> {
   @override
   void dispose() {
     _barCodeTextController.dispose();
+    _nameTextController.dispose();
+    _originalPriceTextController.dispose();
+    _discountTextController.dispose();
+    _descriptionTextController.dispose();
 
     super.dispose();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    final viewModel = context.watch<ProductViewModel>();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("New Product"),
+        actions: viewModel.isDeleteButtonVisible
+            ? [
+                DeleteButtonWidget(onClick: () => {}),
+              ]
+            : [],
+      ),
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.all(8),
+          child: Scrollbar(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    children: [
+                      _imagesWidget,
+                      SizedBox(height: 20),
+                      _nameWidget,
+                      SizedBox(height: 20),
+                      _categoryPicker,
+                      SizedBox(height: 20),
+                      _priceWidget,
+                      SizedBox(height: 20),
+                      _barCodeWidget,
+                      SizedBox(height: 20),
+                      _descriptionWidget,
+                    ],
+                  ),
+                ),
+                Center(
+                  child: RoundButtonWidget(
+                      title: viewModel.buttonTitle,
+                      backgroundColor: viewModel.isSaveButtonEnable
+                          ? Colors.blue
+                          : Colors.grey,
+                      onClick: viewModel.isSaveButtonEnable
+                          ? () => viewModel.saveProduct(context)
+                          : null),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void setStateIfNeeded(Function function) {
+    setState(() => function());
+  }
+}
+
+extension ProductWidgetComputedPropeties on _ProductWidgetState {
   Widget get _nameWidget {
     return Consumer<ProductViewModel>(
       builder: (context, viewModel, child) => InputTextFieldWidget(
@@ -140,16 +207,6 @@ class _ProductWidgetState extends State<ProductWidget> {
     );
   }
 
-  Widget get _sd {
-    return Container(
-      height: 60,
-      child: TextButton(
-        onPressed: () => _createNewCategory(),
-        child: Icon(Icons.category),
-      ),
-    );
-  }
-
   Widget get _categoryPicker {
     return Consumer<ProductViewModel>(
       builder: (context, viewModel, child) => Row(
@@ -172,7 +229,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                     child: Text(
                       viewModel.selectedCategory == null
                           ? "Choose a category"
-                          : viewModel.selectedCategory!.name,
+                          : viewModel.selectedCategory!.categoryName,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -196,56 +253,66 @@ class _ProductWidgetState extends State<ProductWidget> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final viewModel = context.watch<ProductViewModel>();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("New Product"),
-        actions: viewModel.isDeleteButtonVisible
-            ? [
-                DeleteButtonWidget(onClick: () => {}),
-              ]
-            : [],
-      ),
-      body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.all(8),
-          child: Scrollbar(
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    children: [
-                      _nameWidget,
-                      SizedBox(height: 20),
-                      _categoryPicker,
-                      SizedBox(height: 20),
-                      _priceWidget,
-                      SizedBox(height: 20),
-                      _barCodeWidget,
-                      SizedBox(height: 20),
-                      _descriptionWidget,
-                    ],
-                  ),
-                ),
-                Center(
-                  child: RoundButtonWidget(
-                      title: viewModel.buttonTitle,
-                      backgroundColor: viewModel.isSaveButtonEnable
-                          ? Colors.blue
-                          : Colors.grey,
-                      onClick: viewModel.isSaveButtonEnable
-                          ? () => viewModel.saveProduct(context)
-                          : null),
-                )
-              ],
+  Widget get _imagesWidget {
+    return Consumer<ProductViewModel>(
+      builder: (context, viewModel, child) => Center(
+        child: Column(
+          children: [
+            createImageWidget(
+              image: viewModel.selectedImage,
+              isInList: false,
+              imageSize: 150,
             ),
-          ),
+            SizedBox(height: 20),
+            Container(
+              height: 85,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: viewModel.images.length,
+                itemBuilder: (context, index) {
+                  final asset = viewModel.images[index];
+                  return createImageWidget(
+                    image: asset,
+                    isInList: true,
+                    imageSize: 65,
+                  );
+                },
+              ),
+            ),
+            CupertinoButton(
+              child: Text("Select Image"),
+              onPressed: () => loadAssets(),
+            ),
+          ],
         ),
       ),
     );
+  }
+}
+
+extension ProductWidgetFunction on _ProductWidgetState {
+  void _createNewCategory() async {
+    final viewModel = context.read<ProductViewModel>();
+    await Navigator.pushNamed(context, AppRouter.CATEGORY);
+    viewModel.getCategories();
+  }
+
+  Future<void> _scanBarcodeNormal() async {
+    final viewModel = context.read<ProductViewModel>();
+
+    String barcodeScanRes;
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+      print(barcodeScanRes);
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+
+    if (!mounted) return;
+
+    viewModel.setBarCode(barCode: barcodeScanRes);
+    setStateIfNeeded(() => _barCodeTextController.text = viewModel.barCode);
   }
 
   void _showImageActionSheet() async {
@@ -278,7 +345,7 @@ class _ProductWidgetState extends State<ProductWidget> {
               .map(
                 (e) => CupertinoActionSheetAction(
                   onPressed: () => Navigator.pop(context, e),
-                  child: Text(e.name.toUpperCase()),
+                  child: Text(e.categoryName.toUpperCase()),
                 ),
               )
               .toList() +
@@ -294,29 +361,75 @@ class _ProductWidgetState extends State<ProductWidget> {
     );
   }
 
-  void _createNewCategory() async {
-    final viewModel = context.read<ProductViewModel>();
-    await Navigator.pushNamed(context, AppRouter.CATEGORY);
-    viewModel.getCategories();
+  Widget createImageWidget(
+      {required ImageObject? image,
+      required bool isInList,
+      required double imageSize}) {
+    final viewModel = context.watch<ProductViewModel>();
+
+    return GestureDetector(
+      onTap: () {
+        if (viewModel.images.isNotEmpty) {
+          viewModel.setSelectedImage(image: image);
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.all(2),
+        margin: EdgeInsets.all(10),
+        width: imageSize,
+        height: imageSize,
+        decoration: BoxDecoration(
+          color:
+              viewModel.selectedImage == image && isInList ? Colors.red : null,
+          borderRadius: BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+          child: image == null
+              ? Container(
+                  color: Colors.grey[200],
+                  child: Icon(
+                    Icons.camera_alt_outlined,
+                  ),
+                )
+              : Image(
+                  fit: BoxFit.cover,
+                  image: MemoryImage(image.memory),
+                ),
+        ),
+      ),
+    );
   }
 
-  Future<void> _scanBarcodeNormal() async {
+  Future<void> loadAssets() async {
     final viewModel = context.read<ProductViewModel>();
 
-    String barcodeScanRes;
+    List<Asset> resultList = <Asset>[];
+    String error = 'No Error Detected';
+    print("load");
     try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-      print(barcodeScanRes);
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 300,
+        enableCamera: true,
+        selectedAssets: viewModel.assets,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Example App",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+    } on Exception catch (e) {
+      error = e.toString();
+      print(error);
     }
-
     if (!mounted) return;
-
-    viewModel.setBarCode(barCode: barcodeScanRes);
-    setState(() {
-      _barCodeTextController.text = viewModel.barCode;
-    });
+    viewModel.setAssets(images: resultList);
   }
 }

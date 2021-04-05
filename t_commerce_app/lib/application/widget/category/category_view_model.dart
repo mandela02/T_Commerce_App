@@ -16,9 +16,9 @@ class CategoryViewModel extends ChangeNotifier {
   CategoryViewModel({Category? category}) {
     this._category = category;
     this._useCase = UseCaseProvider().getCategoryUseCase();
-    setName(name: _category?.name ?? "");
+    setName(name: _category?.categoryName ?? "");
     setDescription(description: _category?.description ?? "");
-    setFile(image: _category?.image);
+    setFile(image: _category?.memoryImage);
   }
 
   Uint8List? get image {
@@ -34,7 +34,7 @@ class CategoryViewModel extends ChangeNotifier {
   }
 
   String get appBarTitle {
-    return _category == null ? "New category" : _category!.name;
+    return _category == null ? "New category" : _category!.categoryName;
   }
 
   bool get isSaveButtonEnable {
@@ -47,16 +47,16 @@ class CategoryViewModel extends ChangeNotifier {
 
   void save(BuildContext context) async {
     if (_category == null) {
-      Category category =
-          Category.create(name: _name, description: _description, image: image);
+      Category category = Category.create(
+          categoryName: _name, description: _description, memoryImage: image);
       await _useCase.add(category);
     } else {
       Category existCategory = _category!;
       Category category = Category(
           id: existCategory.id,
-          name: _name,
+          categoryName: _name,
           description: _description,
-          image: image);
+          memoryImage: image);
       await _useCase.update(category);
     }
     Navigator.pop(context);

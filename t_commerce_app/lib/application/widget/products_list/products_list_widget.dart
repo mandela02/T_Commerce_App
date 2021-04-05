@@ -87,7 +87,7 @@ class ProductCardWidget extends StatelessWidget {
       child: ListTile(
         onTap: () => onCellTap(),
         title: Text(product.name),
-        subtitle: Text(category?.name ?? ""),
+        subtitle: Text(category?.categoryName ?? ""),
         isThreeLine: true,
       ),
     );

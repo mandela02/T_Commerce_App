@@ -9,17 +9,18 @@ class CategoryListUseCase implements CategoryListUseCaseType {
   @override
   Future<List<Category>> getAllCategory() async {
     List<Map<String, dynamic>> maps =
-        await _repository.getAll(TableName.categoryTableName);
+        await _repository.getAll(TableName.CATEGORY_TABLE_NAME);
     return maps.map((e) => Category.fromMap(e)).toList();
   }
 
   @override
   Future<void> add(Category category) {
-    return _repository.insert(category, TableName.categoryTableName);
+    return _repository.insert(category, TableName.CATEGORY_TABLE_NAME);
   }
 
   @override
   Future<void> delete(Category category) async {
-    return _repository.delete("id", category.id, TableName.categoryTableName);
+    return _repository.delete(
+        CategoryRowName.id.name, category.id, TableName.CATEGORY_TABLE_NAME);
   }
 }

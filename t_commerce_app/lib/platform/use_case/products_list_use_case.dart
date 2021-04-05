@@ -7,13 +7,12 @@ import 'package:t_commerce_app/platform/repository/repository.dart';
 
 class ProductsListUseCase implements ProductsListUseCaseType {
   Repository<Product> _productRepository = Repository();
-  Repository<Category> _categoryRepository = Repository();
   Repository<CategoryOfProduct> _categoryOfProductRepository = Repository();
 
   @override
   Future<List<Product>> getAllProduct() async {
     List<Map<String, dynamic>> maps =
-        await _productRepository.getAll(TableName.productTableName);
+        await _productRepository.getAll(TableName.PRODUCT_TABLE_NAME);
     return maps.map((e) => Product.fromMap(e)).toList();
   }
 
@@ -21,7 +20,9 @@ class ProductsListUseCase implements ProductsListUseCaseType {
   Future<Category?> getSelectedCategory({required Product product}) async {
     List<Map<String, dynamic>> categoryOfProductMaps =
         await _categoryOfProductRepository.query(
-            "productId", product.id, TableName.categoryOfProductTableName);
+            CategoryOfProductRowName.productId.name,
+            product.id,
+            TableName.CATEGORY_OF_PRODUCT_TABLE_NAME);
 
     List<CategoryOfProduct> categoryOfProducts =
         categoryOfProductMaps.map((e) => CategoryOfProduct.fromMap(e)).toList();
@@ -30,7 +31,9 @@ class ProductsListUseCase implements ProductsListUseCaseType {
       String categoryId = categoryOfProducts.first.categoryId;
       List<Map<String, dynamic>> categoriesMaps =
           await _categoryOfProductRepository.query(
-              "id", categoryId, TableName.categoryTableName);
+              CategoryOfProductRowName.id.name,
+              categoryId,
+              TableName.CATEGORY_TABLE_NAME);
 
       List<Category> categories =
           categoriesMaps.map((e) => Category.fromMap(e)).toList();
