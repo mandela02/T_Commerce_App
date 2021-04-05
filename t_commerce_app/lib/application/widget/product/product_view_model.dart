@@ -10,10 +10,10 @@ class ProductViewModel extends ChangeNotifier {
   ProductUseCaseType _useCase = UseCaseProvider().getProductUseCase();
 
   List<Category> _categories = [];
-  List<ImageForSaveObject> _images = [];
+  List<ImageObject> _images = [];
   List<Asset> _assets = [];
 
-  ImageForSaveObject? _selectedImage;
+  ImageObject? _selectedImage;
 
   Category? _selectedCategory;
   Product? _product;
@@ -44,12 +44,12 @@ class ProductViewModel extends ChangeNotifier {
       final notNullProduct = _product!;
       final dataImages = await _useCase.getAllImage(product: notNullProduct);
       final imageList = dataImages
-          .map((e) => ImageForSaveObject(memory: e.image, asset: e.imageAsset))
+          .map((e) => ImageObject(memory: e.memoryImage, asset: e.assetImage))
           .toList();
       final selected = dataImages.firstWhere((element) => element.isAvatar);
-      _selectedImage = ImageForSaveObject(
-          memory: selected.image, asset: selected.imageAsset);
       _images = imageList;
+      _selectedImage =
+          ImageObject(memory: selected.memoryImage, asset: selected.assetImage);
       change();
     }
   }
@@ -121,55 +121,23 @@ class ProductViewModel extends ChangeNotifier {
 }
 
 extension ProductViewModelGetter on ProductViewModel {
-  String get name {
-    return _name;
-  }
-
-  String get description {
-    return _description;
-  }
-
-  String get originalPrice {
-    return _originalPrice;
-  }
-
-  String get discountPrice {
-    return _discountPrice;
-  }
-
-  String get barCode {
-    return _barCode;
-  }
-
-  String get appBarTitle {
-    return _product == null ? "New product" : _product!.name;
-  }
-
-  String get buttonTitle {
-    return _product == null ? "Create" : "Update";
-  }
-
-  bool get isSaveButtonEnable {
-    return _name.isNotEmpty &&
-        _selectedCategory != null &&
-        _originalPrice.isNotEmpty &&
-        _selectedImage != null;
-  }
-
-  bool get isDeleteButtonVisible {
-    return _product != null;
-  }
-
-  List<Category> get categories {
-    return _categories;
-  }
-
-  Category? get selectedCategory {
-    return _selectedCategory;
-  }
-
-  List<ImageForSaveObject> get images => _images;
-  ImageForSaveObject? get selectedImage => _selectedImage;
+  String get name => _name;
+  String get description => _description;
+  String get originalPrice => _originalPrice;
+  String get discountPrice => _discountPrice;
+  String get barCode => _barCode;
+  String get appBarTitle => _product == null ? "New product" : _product!.name;
+  String get buttonTitle => _product == null ? "Create" : "Update";
+  bool get isSaveButtonEnable =>
+      _name.isNotEmpty &&
+      _selectedCategory != null &&
+      _originalPrice.isNotEmpty &&
+      _selectedImage != null;
+  bool get isDeleteButtonVisible => _product != null;
+  List<Category> get categories => _categories;
+  Category? get selectedCategory => _selectedCategory;
+  List<ImageObject> get images => _images;
+  ImageObject? get selectedImage => _selectedImage;
   List<Asset> get assets => _assets;
 }
 
@@ -204,12 +172,12 @@ extension ProductViewModelSetter on ProductViewModel {
     change();
   }
 
-  void setSelectedImage({required ImageForSaveObject? image}) {
+  void setSelectedImage({required ImageObject? image}) {
     _selectedImage = image;
     change();
   }
 
-  void setListImages({required List<ImageForSaveObject> images}) {
+  void setListImages({required List<ImageObject> images}) {
     _images = images;
     _updateSelectedImage();
     change();
@@ -237,7 +205,7 @@ extension ProductViewModelFunction on ProductViewModel {
     final dataList = resultList.map(
       (e) async {
         final data = await e.getByteData();
-        return ImageForSaveObject(
+        return ImageObject(
             asset: e,
             memory: data.buffer
                 .asUint8List(data.offsetInBytes, data.lengthInBytes));

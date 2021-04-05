@@ -7,7 +7,6 @@ import 'package:t_commerce_app/platform/repository/repository.dart';
 
 class ProductsListUseCase implements ProductsListUseCaseType {
   Repository<Product> _productRepository = Repository();
-  Repository<Category> _categoryRepository = Repository();
   Repository<CategoryOfProduct> _categoryOfProductRepository = Repository();
 
   @override

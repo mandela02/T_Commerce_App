@@ -24,8 +24,8 @@ class ProductUseCase implements ProductUseCaseType {
   Future<void> save(
       {required Product product,
       required Category category,
-      required List<ImageForSaveObject> images,
-      required ImageForSaveObject avatar}) async {
+      required List<ImageObject> images,
+      required ImageObject avatar}) async {
     await _productRepository.insert(product, TableName.PRODUCT_TABLE_NAME);
 
     CategoryOfProduct categoryOfProduct = CategoryOfProduct.create(
@@ -40,8 +40,8 @@ class ProductUseCase implements ProductUseCaseType {
   Future<void> update(
       {required Product product,
       required Category category,
-      required List<ImageForSaveObject> images,
-      required ImageForSaveObject avatar}) async {
+      required List<ImageObject> images,
+      required ImageObject avatar}) async {
     await _productRepository.update(product, CategoryRowName.id.name,
         product.id, TableName.PRODUCT_TABLE_NAME);
 
@@ -61,8 +61,8 @@ class ProductUseCase implements ProductUseCaseType {
 }
 
 extension ProductUseCaseExtension on ProductUseCase {
-  Future<void> _updateImage(Product product, List<ImageForSaveObject> images,
-      ImageForSaveObject avatar) async {
+  Future<void> _updateImage(
+      Product product, List<ImageObject> images, ImageObject avatar) async {
     final existingImage = await getAllImage(product: product);
     final deleteQueue = existingImage.map((e) =>
         _imageOfProductRepository.delete(ImageOfProductRowName.id.name, e.id,
@@ -71,14 +71,14 @@ extension ProductUseCaseExtension on ProductUseCase {
     await _saveImage(product, images, avatar);
   }
 
-  Future<void> _saveImage(Product product, List<ImageForSaveObject> images,
-      ImageForSaveObject avatar) async {
+  Future<void> _saveImage(
+      Product product, List<ImageObject> images, ImageObject avatar) async {
     final list = images
         .map((e) => ImageOfProduct.create(
             productId: product.id,
-            image: e.memory,
+            memoryImage: e.memory,
             isAvatar: e == avatar,
-            imageAsset: e.asset))
+            assetImage: e.asset))
         .map((e) => _imageOfProductRepository.insert(
             e, TableName.IMAGE_OF_PRODUCT_TABLE_NAME))
         .toList();

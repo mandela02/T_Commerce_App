@@ -7,12 +7,12 @@ import 'package:uuid/uuid.dart';
 enum ImageOfProductRowName {
   id,
   productId,
-  image,
+  memoryImage,
   isAvatar,
-  identifier,
-  name,
-  originalWidth,
-  originalHeight
+  assetIdentifier,
+  assetName,
+  assetOriginalWidth,
+  assetOriginalHeight
 }
 
 extension ImageOfProductRowNameExtension on ImageOfProductRowName {
@@ -22,18 +22,18 @@ extension ImageOfProductRowNameExtension on ImageOfProductRowName {
         return "id";
       case ImageOfProductRowName.productId:
         return "productId";
-      case ImageOfProductRowName.image:
-        return "image";
+      case ImageOfProductRowName.memoryImage:
+        return "memoryImage";
       case ImageOfProductRowName.isAvatar:
         return "isAvatar";
-      case ImageOfProductRowName.identifier:
-        return "identifier";
-      case ImageOfProductRowName.name:
-        return "name";
-      case ImageOfProductRowName.originalWidth:
-        return "originalWidth";
-      case ImageOfProductRowName.originalHeight:
-        return "originalHeight";
+      case ImageOfProductRowName.assetIdentifier:
+        return "assetIdentifier";
+      case ImageOfProductRowName.assetName:
+        return "assetName";
+      case ImageOfProductRowName.assetOriginalWidth:
+        return "assetOriginalWidth";
+      case ImageOfProductRowName.assetOriginalHeight:
+        return "assetOriginalHeight";
     }
   }
 }
@@ -41,47 +41,51 @@ extension ImageOfProductRowNameExtension on ImageOfProductRowName {
 class ImageOfProduct extends ModelType {
   String id = Uuid().v4();
   String productId;
-  Uint8List image;
+  Uint8List memoryImage;
   bool isAvatar;
-  Asset? imageAsset;
+  Asset? assetImage;
 
   ImageOfProduct(
       {required this.id,
       required this.productId,
-      required this.image,
+      required this.memoryImage,
       required this.isAvatar,
-      required this.imageAsset});
+      required this.assetImage});
 
   ImageOfProduct.create(
       {required this.productId,
-      required this.image,
+      required this.memoryImage,
       required this.isAvatar,
-      required this.imageAsset});
+      required this.assetImage});
 
   @override
   Map<String, dynamic> toMap() {
     return {
       ImageOfProductRowName.id.name: id,
       ImageOfProductRowName.productId.name: productId,
-      ImageOfProductRowName.image.name: image,
+      ImageOfProductRowName.memoryImage.name: memoryImage,
       ImageOfProductRowName.isAvatar.name: isAvatar ? 1 : 0,
-      ImageOfProductRowName.identifier.name: imageAsset?.identifier,
-      ImageOfProductRowName.name.name: imageAsset?.name,
-      ImageOfProductRowName.originalWidth.name: imageAsset?.originalWidth,
-      ImageOfProductRowName.originalHeight.name: imageAsset?.originalHeight,
+      ImageOfProductRowName.assetIdentifier.name: assetImage?.identifier,
+      ImageOfProductRowName.assetName.name: assetImage?.name,
+      ImageOfProductRowName.assetOriginalWidth.name: assetImage?.originalWidth,
+      ImageOfProductRowName.assetOriginalHeight.name:
+          assetImage?.originalHeight,
     };
   }
 
   static ImageOfProduct fromMap(Map<String, dynamic> map) {
     return ImageOfProduct(
-        id: map["id"],
-        productId: map["productId"],
-        image: map["image"],
-        isAvatar: map["isAvatar"] as int == 0 ? false : true,
-        imageAsset: Asset(
-            map[ImageOfProductRowName.identifier.name],
-            map[ImageOfProductRowName.name.name],
-            map[ImageOfProductRowName.originalWidth.name],
-            map[ImageOfProductRowName.originalHeight.name]));
+      id: map[ImageOfProductRowName.id.name],
+      productId: map[ImageOfProductRowName.productId.name],
+      memoryImage: map[ImageOfProductRowName.memoryImage.name],
+      isAvatar:
+          map[ImageOfProductRowName.isAvatar.name] as int == 0 ? false : true,
+      assetImage: Asset(
+        map[ImageOfProductRowName.assetIdentifier.name],
+        map[ImageOfProductRowName.assetName.name],
+        map[ImageOfProductRowName.assetOriginalWidth.name],
+        map[ImageOfProductRowName.assetOriginalHeight.name],
+      ),
+    );
   }
 }

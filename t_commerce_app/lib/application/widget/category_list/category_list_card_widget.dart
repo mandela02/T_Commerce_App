@@ -17,13 +17,13 @@ class CategoryListCardWidget extends StatelessWidget {
       color: Colors.white,
       child: ListTile(
         onTap: () => onTap(),
-        title: Text(category.name),
+        title: Text(category.categoryName),
         subtitle: Text(category.description),
-        leading: category.image == null
+        leading: category.memoryImage == null
             ? Icon(Icons.category)
             : CircleAvatar(
                 backgroundColor: Colors.grey[100],
-                backgroundImage: MemoryImage(category.image!),
+                backgroundImage: MemoryImage(category.memoryImage!),
               ),
         isThreeLine: true,
       ),

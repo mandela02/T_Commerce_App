@@ -5,9 +5,9 @@ import 'package:uuid/uuid.dart';
 
 enum CategoryRowName {
   id,
-  name,
+  categoryName,
   description,
-  image,
+  memoryImage,
 }
 
 extension CategoryRowNameExtension on CategoryRowName {
@@ -15,46 +15,48 @@ extension CategoryRowNameExtension on CategoryRowName {
     switch (this) {
       case CategoryRowName.id:
         return "id";
-      case CategoryRowName.name:
-        return "name";
+      case CategoryRowName.categoryName:
+        return "categoryName";
       case CategoryRowName.description:
         return "description";
-      case CategoryRowName.image:
-        return "image";
+      case CategoryRowName.memoryImage:
+        return "memoryImage";
     }
   }
 }
 
 class Category implements ModelType {
   String id = Uuid().v4();
-  String name = "";
+  String categoryName = "";
   String description = "";
-  Uint8List? image;
+  Uint8List? memoryImage;
 
   Category(
       {required this.id,
-      required this.name,
+      required this.categoryName,
       required this.description,
-      required this.image});
+      required this.memoryImage});
 
   Category.create(
-      {required this.name, required this.description, required this.image});
+      {required this.categoryName,
+      required this.description,
+      required this.memoryImage});
 
   @override
   Map<String, dynamic> toMap() {
     return {
       CategoryRowName.id.name: id,
-      CategoryRowName.name.name: name,
+      CategoryRowName.categoryName.name: categoryName,
       CategoryRowName.description.name: description,
-      CategoryRowName.image.name: image
+      CategoryRowName.memoryImage.name: memoryImage
     };
   }
 
   static Category fromMap(Map<String, dynamic> map) {
     return Category(
         id: map[CategoryRowName.id.name],
-        name: map[CategoryRowName.name.name],
+        categoryName: map[CategoryRowName.categoryName.name],
         description: map[CategoryRowName.description.name],
-        image: map[CategoryRowName.image.name]);
+        memoryImage: map[CategoryRowName.memoryImage.name]);
   }
 }

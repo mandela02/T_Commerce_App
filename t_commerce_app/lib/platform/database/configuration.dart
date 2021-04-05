@@ -34,9 +34,9 @@ class Configuration {
     String createCategoryTable = """
         CREATE TABLE ${TableName.CATEGORY_TABLE_NAME} (
         ${CategoryRowName.id.name} TEXT PRIMARY KEY, 
-        ${CategoryRowName.name.name} TEXT, 
+        ${CategoryRowName.categoryName.name} TEXT, 
         ${CategoryRowName.description.name} TEXT, 
-        ${CategoryRowName.image.name} BLOB
+        ${CategoryRowName.memoryImage.name} BLOB
         )
         """;
 
@@ -65,12 +65,12 @@ class Configuration {
         CREATE TABLE ${TableName.IMAGE_OF_PRODUCT_TABLE_NAME}(
         ${ImageOfProductRowName.id.name} TEXT PRIMARY KEY, 
         ${ImageOfProductRowName.productId.name} TEXT,
-        ${ImageOfProductRowName.image.name} BLOB, 
+        ${ImageOfProductRowName.memoryImage.name} BLOB, 
         ${ImageOfProductRowName.isAvatar.name} INTEGER,
-        ${ImageOfProductRowName.identifier.name} TEXT,
-        ${ImageOfProductRowName.name.name} TEXT,
-        ${ImageOfProductRowName.originalWidth.name} INTEGER,
-        ${ImageOfProductRowName.originalHeight.name} INTEGER
+        ${ImageOfProductRowName.assetIdentifier.name} TEXT,
+        ${ImageOfProductRowName.assetName.name} TEXT,
+        ${ImageOfProductRowName.assetOriginalWidth.name} INTEGER,
+        ${ImageOfProductRowName.assetOriginalHeight.name} INTEGER
         )
         """;
 

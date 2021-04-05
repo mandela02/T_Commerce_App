@@ -8,12 +8,12 @@ abstract class ProductUseCaseType {
   Future<void> save(
       {required Product product,
       required Category category,
-      required List<ImageForSaveObject> images,
-      required ImageForSaveObject avatar});
+      required List<ImageObject> images,
+      required ImageObject avatar});
   Future<void> update(
       {required Product product,
       required Category category,
-      required List<ImageForSaveObject> images,
-      required ImageForSaveObject avatar});
+      required List<ImageObject> images,
+      required ImageObject avatar});
   Future<List<ImageOfProduct>> getAllImage({required Product product});
 }

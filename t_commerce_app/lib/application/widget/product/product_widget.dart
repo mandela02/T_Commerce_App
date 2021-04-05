@@ -229,7 +229,7 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
                     child: Text(
                       viewModel.selectedCategory == null
                           ? "Choose a category"
-                          : viewModel.selectedCategory!.name,
+                          : viewModel.selectedCategory!.categoryName,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -345,7 +345,7 @@ extension ProductWidgetFunction on _ProductWidgetState {
               .map(
                 (e) => CupertinoActionSheetAction(
                   onPressed: () => Navigator.pop(context, e),
-                  child: Text(e.name.toUpperCase()),
+                  child: Text(e.categoryName.toUpperCase()),
                 ),
               )
               .toList() +
@@ -362,7 +362,7 @@ extension ProductWidgetFunction on _ProductWidgetState {
   }
 
   Widget createImageWidget(
-      {required ImageForSaveObject? image,
+      {required ImageObject? image,
       required bool isInList,
       required double imageSize}) {
     final viewModel = context.watch<ProductViewModel>();
