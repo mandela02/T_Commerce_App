@@ -44,7 +44,7 @@ class Configuration {
         CREATE TABLE ${TableName.PRODUCT_TABLE_NAME}(
         ${ProductRowName.id.name} TEXT PRIMARY KEY, 
         ${ProductRowName.name.name} TEXT, 
-        ${ProductRowName.originalPrice.name} INTEGER, 
+        ${ProductRowName.sellPrice.name} INTEGER, 
         ${ProductRowName.discountPrice.name} INTEGER, 
         ${ProductRowName.createDate.name} INTEGER, 
         ${ProductRowName.updateDate.name} INTEGER, 

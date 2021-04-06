@@ -39,7 +39,7 @@ class ProductCardWidget extends StatelessWidget {
         trailing: Column(
           children: [
             Text(
-              "${product.originalPrice}\$",
+              "${product.sellPrice}\$",
               style: product.discountPrice == null
                   ? null
                   : TextStyle(decoration: TextDecoration.lineThrough),

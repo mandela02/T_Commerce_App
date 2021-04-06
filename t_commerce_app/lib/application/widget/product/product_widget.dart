@@ -10,6 +10,7 @@ import 'package:t_commerce_app/application/widget/reusable_wigdet/alert_dialog.d
 import 'package:t_commerce_app/application/widget/reusable_wigdet/delete_button_widget.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/intput_text_field_widget.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/round_button_widget.dart';
+import 'package:t_commerce_app/application/widget/reusable_wigdet/round_icon_button_widget.dart';
 import 'package:t_commerce_app/domain/model/category.dart';
 import 'package:t_commerce_app/domain/model/image_object.dart';
 
@@ -23,9 +24,11 @@ class _ProductWidgetState extends State<ProductWidget> {
 
   late TextEditingController _barCodeTextController;
   late TextEditingController _nameTextController;
-  late TextEditingController _originalPriceTextController;
+  late TextEditingController _sellPriceTextController;
   late TextEditingController _discountTextController;
   late TextEditingController _descriptionTextController;
+  late TextEditingController _weightTextController;
+  late TextEditingController _importPriceTextController;
 
   @override
   void initState() {
@@ -34,19 +37,21 @@ class _ProductWidgetState extends State<ProductWidget> {
     viewModel.getCategories();
     _barCodeTextController = TextEditingController(text: viewModel.barCode);
     _nameTextController = TextEditingController(text: viewModel.name);
-    _originalPriceTextController =
-        TextEditingController(text: viewModel.originalPrice);
+    _sellPriceTextController = TextEditingController(text: viewModel.sellPrice);
     _discountTextController =
         TextEditingController(text: viewModel.discountPrice);
     _descriptionTextController =
         TextEditingController(text: viewModel.description);
+    _weightTextController = TextEditingController(text: viewModel.weight);
+    _importPriceTextController =
+        TextEditingController(text: viewModel.importPrice);
   }
 
   @override
   void dispose() {
     _barCodeTextController.dispose();
     _nameTextController.dispose();
-    _originalPriceTextController.dispose();
+    _sellPriceTextController.dispose();
     _discountTextController.dispose();
     _descriptionTextController.dispose();
 
@@ -59,6 +64,7 @@ class _ProductWidgetState extends State<ProductWidget> {
 
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: Text(viewModel.appBarTitle),
         actions: viewModel.isDeleteButtonVisible
             ? [
@@ -66,41 +72,39 @@ class _ProductWidgetState extends State<ProductWidget> {
               ]
             : [],
       ),
-      body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.all(8),
-          child: Scrollbar(
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    children: [
-                      _imagesWidget,
-                      SizedBox(height: 20),
-                      _nameWidget,
-                      SizedBox(height: 20),
-                      _categoryPicker,
-                      SizedBox(height: 20),
-                      _priceWidget,
-                      SizedBox(height: 20),
-                      _barCodeWidget,
-                      SizedBox(height: 20),
-                      _descriptionWidget,
-                    ],
-                  ),
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 5),
+        color: Colors.grey[100],
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  children: [
+                    _imagesWidget,
+                    SizedBox(height: 10),
+                    _generalInformationWidget,
+                    SizedBox(height: 10),
+                    _allPriceWidget,
+                    SizedBox(height: 10),
+                    _sizeWidget,
+                  ],
                 ),
-                Center(
-                  child: RoundButtonWidget(
-                      title: viewModel.buttonTitle,
-                      backgroundColor: viewModel.isSaveButtonEnable
-                          ? Colors.blue
-                          : Colors.grey,
-                      onClick: viewModel.isSaveButtonEnable
-                          ? () => viewModel.saveProduct(context)
-                          : null),
-                )
-              ],
-            ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Center(
+                child: RoundButtonWidget(
+                    title: viewModel.buttonTitle,
+                    backgroundColor: viewModel.isSaveButtonEnable
+                        ? Colors.blue
+                        : Colors.grey,
+                    onClick: viewModel.isSaveButtonEnable
+                        ? () => viewModel.saveProduct(context)
+                        : null),
+              )
+            ],
           ),
         ),
       ),
@@ -113,6 +117,27 @@ class _ProductWidgetState extends State<ProductWidget> {
 }
 
 extension ProductWidgetComputedPropeties on _ProductWidgetState {
+  Widget get _generalInformationWidget {
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _nameWidget,
+            SizedBox(height: 20),
+            _categoryPicker,
+            SizedBox(height: 20),
+            _barCodeWidget,
+            SizedBox(height: 20),
+            _descriptionWidget,
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget get _nameWidget {
     return Consumer<ProductViewModel>(
       builder: (context, viewModel, child) => InputTextFieldWidget(
@@ -144,21 +169,40 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
     );
   }
 
-  Widget get _priceWidget {
+  Widget get _allPriceWidget {
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _sellPriceWidget,
+            SizedBox(
+              height: 20,
+            ),
+            _importPriceWidget,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget get _sellPriceWidget {
     return Consumer<ProductViewModel>(
       builder: (context, viewModel, child) => Row(
         children: [
           Expanded(
             flex: 1,
             child: InputTextFieldWidget(
-              title: "Original Price",
+              title: "Sell Price",
               placeholder: "Enter price",
               height: 40,
               isMultiLine: false,
               size: _commonFontSize,
-              controller: _originalPriceTextController,
+              controller: _sellPriceTextController,
               keyboard: TextInputType.number,
-              onTextChange: (price) => viewModel.setOriginalPrice(price: price),
+              onTextChange: (price) => viewModel.setSellPrice(price: price),
             ),
           ),
           SizedBox(width: 20),
@@ -173,6 +217,53 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
               controller: _discountTextController,
               keyboard: TextInputType.number,
               onTextChange: (price) => viewModel.setDiscountPrice(price: price),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget get _importPriceWidget {
+    return Consumer<ProductViewModel>(
+      builder: (context, viewModel, child) => Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: InputTextFieldWidget(
+              title: "Import Price",
+              placeholder: "Enter price",
+              height: 40,
+              isMultiLine: false,
+              size: _commonFontSize,
+              controller: _importPriceTextController,
+              keyboard: TextInputType.number,
+              onTextChange: (price) => viewModel.setImportPrice(price: price),
+            ),
+          ),
+          SizedBox(width: 20),
+          Expanded(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  "Revenue",
+                  style: TextStyle(
+                    fontSize: _commonFontSize,
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  viewModel.calculateRevenue(),
+                  style: TextStyle(
+                    fontSize: _commonFontSize,
+                  ),
+                )
+              ],
             ),
           ),
         ],
@@ -196,14 +287,48 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
               onTextChange: (code) => viewModel.setBarCode(barCode: code),
             ),
           ),
-          Container(
+          SizedBox(
+            width: 20,
+          ),
+          RoundIconButtonWidget(
+            width: 65,
             height: 65,
-            child: TextButton(
-              onPressed: () => _scanBarcodeNormal(),
-              child: Icon(Icons.qr_code),
-            ),
+            cornerRadius: Radius.circular(10),
+            tintColor: Colors.white,
+            backgroundColor: Colors.blue,
+            icon: Icons.qr_code_outlined,
+            onButtonTap: _scanBarcodeNormal,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget get _sizeWidget {
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            _weightWidget,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget get _weightWidget {
+    return Consumer<ProductViewModel>(
+      builder: (context, viewModel, child) => InputTextFieldWidget(
+        title: "Weight (g)",
+        placeholder: "Enter production weight",
+        height: 40,
+        isMultiLine: false,
+        size: _commonFontSize,
+        controller: _weightTextController,
+        keyboard: TextInputType.numberWithOptions(decimal: true),
+        onTextChange: (weight) => viewModel.setWeight(weight: weight),
       ),
     );
   }
@@ -224,7 +349,7 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
                 ),
                 SizedBox(height: 8),
                 GestureDetector(
-                  onTap: _showImageActionSheet,
+                  onTap: _showCategoryActionSheet,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
@@ -234,7 +359,6 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
-                          fontStyle: FontStyle.italic,
                           color: Colors.blue),
                     ),
                   ),
@@ -242,12 +366,14 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
               ],
             ),
           ),
-          Container(
-            height: 60,
-            child: TextButton(
-              onPressed: () => _createNewCategory(),
-              child: Icon(Icons.category),
-            ),
+          RoundIconButtonWidget(
+            width: 65,
+            height: 65,
+            cornerRadius: Radius.circular(10),
+            tintColor: Colors.white,
+            backgroundColor: Colors.blue,
+            icon: Icons.category_outlined,
+            onButtonTap: _createNewCategory,
           ),
         ],
       ),
@@ -255,36 +381,50 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
   }
 
   Widget get _imagesWidget {
-    return Consumer<ProductViewModel>(
-      builder: (context, viewModel, child) => Center(
-        child: Column(
-          children: [
-            createImageWidget(
-              image: viewModel.selectedImage,
-              isInList: false,
-              imageSize: 150,
-            ),
-            SizedBox(height: 20),
-            Container(
-              height: 85,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: viewModel.images.length,
-                itemBuilder: (context, index) {
-                  final asset = viewModel.images[index];
-                  return createImageWidget(
-                    image: asset,
-                    isInList: true,
-                    imageSize: 65,
-                  );
-                },
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Consumer<ProductViewModel>(
+        builder: (context, viewModel, child) => Center(
+          child: Column(
+            children: [
+              createImageWidget(
+                image: viewModel.selectedImage,
+                isInList: false,
+                imageSize: 150,
               ),
-            ),
-            CupertinoButton(
-              child: Text("Select Image* (maximum 6 image)"),
-              onPressed: () => loadAssets(),
-            ),
-          ],
+              SizedBox(height: 20),
+              Container(
+                height: 85,
+                child: Row(
+                  children: [
+                    RoundIconButtonWidget(
+                        backgroundColor: Colors.blue,
+                        tintColor: Colors.white,
+                        width: 60,
+                        height: 60,
+                        cornerRadius: Radius.circular(10),
+                        icon: Icons.add_a_photo_outlined,
+                        onButtonTap: loadAssets),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: viewModel.images.length,
+                        itemBuilder: (context, index) {
+                          final asset = viewModel.images[index];
+                          return createImageWidget(
+                            image: asset,
+                            isInList: true,
+                            imageSize: 65,
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -316,7 +456,7 @@ extension ProductWidgetFunction on _ProductWidgetState {
     setStateIfNeeded(() => _barCodeTextController.text = viewModel.barCode);
   }
 
-  void _showImageActionSheet() async {
+  void _showCategoryActionSheet() async {
     final viewModel = context.read<ProductViewModel>();
 
     dynamic pop = await showCupertinoModalPopup(
@@ -425,12 +565,12 @@ extension ProductWidgetFunction on _ProductWidgetState {
           selectCircleStrokeColor: "#000000",
         ),
       );
+
+      if (!mounted) return;
+      viewModel.setAssets(images: resultList);
     } on Exception catch (e) {
       error = e.toString();
-      print(error);
     }
-    if (!mounted) return;
-    viewModel.setAssets(images: resultList);
   }
 
   Future<void> _delete() async {

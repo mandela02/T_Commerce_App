@@ -4,7 +4,7 @@ import 'package:uuid/uuid.dart';
 enum ProductRowName {
   id,
   name,
-  originalPrice,
+  sellPrice,
   discountPrice,
   createDate,
   updateDate,
@@ -19,8 +19,8 @@ extension ProductRowNameExtension on ProductRowName {
         return "id";
       case ProductRowName.name:
         return "name";
-      case ProductRowName.originalPrice:
-        return "originalPrice";
+      case ProductRowName.sellPrice:
+        return "sellPrice";
       case ProductRowName.discountPrice:
         return "discountPrice";
       case ProductRowName.createDate:
@@ -39,7 +39,7 @@ class Product implements ModelType {
   String id = Uuid().v4();
   String name = "";
 
-  int originalPrice = 0;
+  int sellPrice = 0;
   int? discountPrice;
 
   int createDate = 0;
@@ -51,7 +51,7 @@ class Product implements ModelType {
   Product(
       {required this.id,
       required this.name,
-      required this.originalPrice,
+      required this.sellPrice,
       required this.discountPrice,
       required this.createDate,
       required this.updateDate,
@@ -60,7 +60,7 @@ class Product implements ModelType {
 
   Product.create(
       {required this.name,
-      required this.originalPrice,
+      required this.sellPrice,
       required this.discountPrice,
       required this.createDate,
       required this.updateDate,
@@ -72,7 +72,7 @@ class Product implements ModelType {
     return {
       ProductRowName.id.name: id,
       ProductRowName.name.name: name,
-      ProductRowName.originalPrice.name: originalPrice,
+      ProductRowName.sellPrice.name: sellPrice,
       ProductRowName.discountPrice.name: discountPrice,
       ProductRowName.createDate.name: createDate,
       ProductRowName.updateDate.name: updateDate,
@@ -85,7 +85,7 @@ class Product implements ModelType {
     return Product(
         id: map[ProductRowName.id.name],
         name: map[ProductRowName.name.name],
-        originalPrice: map[ProductRowName.originalPrice.name],
+        sellPrice: map[ProductRowName.sellPrice.name],
         discountPrice: map[ProductRowName.discountPrice.name],
         createDate: map[ProductRowName.createDate.name],
         updateDate: map[ProductRowName.updateDate.name],
