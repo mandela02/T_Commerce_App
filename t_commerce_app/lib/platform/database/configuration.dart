@@ -46,10 +46,12 @@ class Configuration {
         ${ProductRowName.name.name} TEXT, 
         ${ProductRowName.sellPrice.name} INTEGER, 
         ${ProductRowName.discountPrice.name} INTEGER, 
+        ${ProductRowName.importPrice.name} INTEGER, 
         ${ProductRowName.createDate.name} INTEGER, 
         ${ProductRowName.updateDate.name} INTEGER, 
         ${ProductRowName.barCode.name} TEXT, 
-        ${ProductRowName.description.name} TEXT
+        ${ProductRowName.description.name} TEXT,
+        ${ProductRowName.weight.name} INTEGER
         )
         """;
 

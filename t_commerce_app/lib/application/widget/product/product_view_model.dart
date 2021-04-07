@@ -35,12 +35,14 @@ class ProductViewModel extends ChangeNotifier {
       final notNullProduct = _product!;
       setName(name: notNullProduct.name);
       setDescription(description: notNullProduct.description);
+      setImportPrice(price: "${notNullProduct.importPrice}");
       setSellPrice(price: "${notNullProduct.sellPrice}");
+      setBarCode(barCode: notNullProduct.barCode);
+      setWeight(weight: "${notNullProduct.weight}");
       setDiscountPrice(
           price: notNullProduct.discountPrice == null
               ? ""
               : "${notNullProduct.discountPrice}");
-      setBarCode(barCode: notNullProduct.barCode);
     }
     getImages();
   }
@@ -191,13 +193,19 @@ extension ProductViewModelFunction on ProductViewModel {
     int now = DateTime.now().millisecondsSinceEpoch;
     int sellPrice = 0;
     int? discountPrice;
+    int importPrice;
+    int weight;
 
     try {
       sellPrice = int.parse(_sellPrice);
       discountPrice = int.parse(_discountPrice);
+      importPrice = int.parse(_importPrice);
+      weight = int.parse(_weight);
     } catch (e) {
       sellPrice = 999999;
       discountPrice = null;
+      importPrice = 999999;
+      weight = 999;
     }
 
     if (_product == null) {
@@ -205,10 +213,12 @@ extension ProductViewModelFunction on ProductViewModel {
           name: _name,
           sellPrice: sellPrice,
           discountPrice: discountPrice,
+          importPrice: importPrice,
           createDate: now,
           updateDate: now,
           barCode: _barCode,
-          description: _description);
+          description: _description,
+          weight: weight);
       if (_selectedCategory != null && _selectedImage != null) {
         await _useCase.save(
             product: product,
@@ -223,16 +233,21 @@ extension ProductViewModelFunction on ProductViewModel {
           name: _name,
           sellPrice: sellPrice,
           discountPrice: discountPrice,
+          importPrice: importPrice,
           createDate: existProduct.createDate,
           updateDate: now,
           barCode: _barCode,
-          description: _description);
+          description: _description,
+          weight: weight);
+
       if (_selectedCategory != null && _selectedImage != null) {
         await _useCase.update(
             product: product,
             category: _selectedCategory!,
             avatar: _selectedImage!,
             images: _images);
+        print(product);
+        print("update");
       }
     }
     Navigator.pop(context);

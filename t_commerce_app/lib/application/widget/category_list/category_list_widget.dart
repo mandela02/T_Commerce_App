@@ -75,9 +75,6 @@ class _CategoryListWidgetState extends State<CategoryListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<CategoryListViewModel>();
-    final categories = viewModel.categories;
-
     return Scrollbar(
       child: Container(
         color: Colors.grey[100],

@@ -54,6 +54,8 @@ class _ProductWidgetState extends State<ProductWidget> {
     _sellPriceTextController.dispose();
     _discountTextController.dispose();
     _descriptionTextController.dispose();
+    _weightTextController.dispose();
+    _importPriceTextController.dispose();
 
     super.dispose();
   }
@@ -570,6 +572,7 @@ extension ProductWidgetFunction on _ProductWidgetState {
       viewModel.setAssets(images: resultList);
     } on Exception catch (e) {
       error = e.toString();
+      print(error);
     }
   }
 
@@ -590,7 +593,7 @@ extension ProductWidgetFunction on _ProductWidgetState {
 
     if (pop != null) {
       AlertResult result = pop as AlertResult;
-      if (pop == AlertResult.success) {
+      if (result == AlertResult.success) {
         await viewModel.delete(context);
       }
     }

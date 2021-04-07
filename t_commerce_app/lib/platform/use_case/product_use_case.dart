@@ -100,10 +100,6 @@ extension ProductUseCaseExtension on ProductUseCase {
 
     List<CategoryOfProduct> categoryOfProducts =
         categoryOfProductMaps.map((e) => CategoryOfProduct.fromMap(e)).toList();
-
-    List<Map<String, dynamic>> all = await _categoryOfProductRepository
-        .getAll(TableName.CATEGORY_OF_PRODUCT_TABLE_NAME);
-
     if (categoryOfProducts.isNotEmpty) {
       String categoryOfProductId = categoryOfProducts.first.id;
       CategoryOfProduct categoryOfProduct = CategoryOfProduct(

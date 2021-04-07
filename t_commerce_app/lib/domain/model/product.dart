@@ -6,10 +6,12 @@ enum ProductRowName {
   name,
   sellPrice,
   discountPrice,
+  importPrice,
   createDate,
   updateDate,
   barCode,
-  description
+  description,
+  weight
 }
 
 extension ProductRowNameExtension on ProductRowName {
@@ -23,6 +25,8 @@ extension ProductRowNameExtension on ProductRowName {
         return "sellPrice";
       case ProductRowName.discountPrice:
         return "discountPrice";
+      case ProductRowName.importPrice:
+        return "importPrice";
       case ProductRowName.createDate:
         return "createDate";
       case ProductRowName.updateDate:
@@ -31,6 +35,8 @@ extension ProductRowNameExtension on ProductRowName {
         return "barCode";
       case ProductRowName.description:
         return "description";
+      case ProductRowName.weight:
+        return "weight";
     }
   }
 }
@@ -39,33 +45,40 @@ class Product implements ModelType {
   String id = Uuid().v4();
   String name = "";
 
-  int sellPrice = 0;
+  int sellPrice;
   int? discountPrice;
+  int importPrice;
 
-  int createDate = 0;
-  int updateDate = 0;
-  String barCode = "";
+  int createDate;
+  int updateDate;
+  String barCode;
 
   String description = "";
+
+  int weight;
 
   Product(
       {required this.id,
       required this.name,
       required this.sellPrice,
       required this.discountPrice,
+      required this.importPrice,
       required this.createDate,
       required this.updateDate,
       required this.barCode,
-      required this.description});
+      required this.description,
+      required this.weight});
 
   Product.create(
       {required this.name,
       required this.sellPrice,
       required this.discountPrice,
+      required this.importPrice,
       required this.createDate,
       required this.updateDate,
       required this.barCode,
-      required this.description});
+      required this.description,
+      required this.weight});
 
   @override
   Map<String, dynamic> toMap() {
@@ -74,10 +87,12 @@ class Product implements ModelType {
       ProductRowName.name.name: name,
       ProductRowName.sellPrice.name: sellPrice,
       ProductRowName.discountPrice.name: discountPrice,
+      ProductRowName.importPrice.name: importPrice,
       ProductRowName.createDate.name: createDate,
       ProductRowName.updateDate.name: updateDate,
       ProductRowName.barCode.name: barCode,
       ProductRowName.description.name: description,
+      ProductRowName.weight.name: weight,
     };
   }
 
@@ -87,9 +102,11 @@ class Product implements ModelType {
         name: map[ProductRowName.name.name],
         sellPrice: map[ProductRowName.sellPrice.name],
         discountPrice: map[ProductRowName.discountPrice.name],
+        importPrice: map[ProductRowName.importPrice.name],
         createDate: map[ProductRowName.createDate.name],
         updateDate: map[ProductRowName.updateDate.name],
         barCode: map[ProductRowName.barCode.name],
-        description: map[ProductRowName.description.name]);
+        description: map[ProductRowName.description.name],
+        weight: map[ProductRowName.weight.name]);
   }
 }
