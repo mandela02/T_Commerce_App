@@ -29,6 +29,8 @@ class _ProductWidgetState extends State<ProductWidget> {
   late TextEditingController _descriptionTextController;
   late TextEditingController _weightTextController;
   late TextEditingController _importPriceTextController;
+  late TextEditingController _quantityTextController;
+  late TextEditingController _unitTextController;
 
   @override
   void initState() {
@@ -45,6 +47,8 @@ class _ProductWidgetState extends State<ProductWidget> {
     _weightTextController = TextEditingController(text: viewModel.weight);
     _importPriceTextController =
         TextEditingController(text: viewModel.importPrice);
+    _quantityTextController = TextEditingController(text: viewModel.quantity);
+    _unitTextController = TextEditingController(text: viewModel.unit);
   }
 
   @override
@@ -56,7 +60,8 @@ class _ProductWidgetState extends State<ProductWidget> {
     _descriptionTextController.dispose();
     _weightTextController.dispose();
     _importPriceTextController.dispose();
-
+    _quantityTextController.dispose();
+    _unitTextController.dispose();
     super.dispose();
   }
 
@@ -309,6 +314,10 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
     return PaddingCardWidget(
       child: Column(
         children: [
+          _quantityWidget,
+          SizedBox(
+            height: 10,
+          ),
           _weightWidget,
         ],
       ),
@@ -428,6 +437,44 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
       ),
     );
   }
+
+  Widget get _quantityWidget {
+    return Consumer<ProductViewModel>(
+      builder: (context, viewModel, child) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Flexible(
+            flex: 1,
+            child: InputTextFieldWidget(
+              title: "Quantity*",
+              placeholder: "enter quantity",
+              height: 40,
+              isMultiLine: false,
+              size: _commonFontSize,
+              controller: _quantityTextController,
+              keyboard: TextInputType.number,
+              onTextChange: (quantity) =>
+                  viewModel.setQuantity(quantity: quantity),
+            ),
+          ),
+          SizedBox(width: 20),
+          Flexible(
+            flex: 1,
+            child: InputTextFieldWidget(
+              title: "Unit*",
+              placeholder: "enter unit",
+              height: 40,
+              isMultiLine: false,
+              size: _commonFontSize,
+              controller: _unitTextController,
+              keyboard: TextInputType.text,
+              onTextChange: (unit) => viewModel.setUnit(unit: unit),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 extension ProductWidgetFunction on _ProductWidgetState {
@@ -452,7 +499,8 @@ extension ProductWidgetFunction on _ProductWidgetState {
     if (!mounted) return;
 
     viewModel.setBarCode(barCode: barcodeScanRes);
-    setStateIfNeeded(() => _barCodeTextController.text = viewModel.barCode);
+    setStateIfNeeded(
+        () => _barCodeTextController.text = viewModel.barCode ?? "");
   }
 
   void _showCategoryActionSheet() async {

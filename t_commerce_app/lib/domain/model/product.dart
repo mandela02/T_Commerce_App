@@ -11,7 +11,9 @@ enum ProductRowName {
   updateDate,
   barCode,
   description,
-  weight
+  weight,
+  quantity,
+  unit,
 }
 
 extension ProductRowNameExtension on ProductRowName {
@@ -37,6 +39,10 @@ extension ProductRowNameExtension on ProductRowName {
         return "description";
       case ProductRowName.weight:
         return "weight";
+      case ProductRowName.quantity:
+        return "quantity";
+      case ProductRowName.unit:
+        return "unit";
     }
   }
 }
@@ -51,11 +57,13 @@ class Product implements ModelType {
 
   int createDate;
   int updateDate;
-  String barCode;
+  String? barCode;
 
   String description = "";
 
   int weight;
+  int quantity;
+  String unit;
 
   Product(
       {required this.id,
@@ -67,7 +75,9 @@ class Product implements ModelType {
       required this.updateDate,
       required this.barCode,
       required this.description,
-      required this.weight});
+      required this.weight,
+      required this.quantity,
+      required this.unit});
 
   Product.create(
       {required this.name,
@@ -78,7 +88,9 @@ class Product implements ModelType {
       required this.updateDate,
       required this.barCode,
       required this.description,
-      required this.weight});
+      required this.weight,
+      required this.quantity,
+      required this.unit});
 
   @override
   Map<String, dynamic> toMap() {
@@ -93,6 +105,8 @@ class Product implements ModelType {
       ProductRowName.barCode.name: barCode,
       ProductRowName.description.name: description,
       ProductRowName.weight.name: weight,
+      ProductRowName.quantity.name: quantity,
+      ProductRowName.unit.name: unit,
     };
   }
 
@@ -107,6 +121,8 @@ class Product implements ModelType {
         updateDate: map[ProductRowName.updateDate.name],
         barCode: map[ProductRowName.barCode.name],
         description: map[ProductRowName.description.name],
-        weight: map[ProductRowName.weight.name]);
+        weight: map[ProductRowName.weight.name],
+        quantity: map[ProductRowName.quantity.name],
+        unit: map[ProductRowName.unit.name]);
   }
 }

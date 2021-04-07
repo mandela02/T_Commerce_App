@@ -50,8 +50,10 @@ class Configuration {
         ${ProductRowName.createDate.name} INTEGER, 
         ${ProductRowName.updateDate.name} INTEGER, 
         ${ProductRowName.barCode.name} TEXT, 
-        ${ProductRowName.description.name} TEXT,
-        ${ProductRowName.weight.name} INTEGER
+        ${ProductRowName.description.name} TEXT, 
+        ${ProductRowName.weight.name} INTEGER,
+        ${ProductRowName.quantity.name} INTEGER,
+        ${ProductRowName.unit.name} TEXT
         )
         """;
 

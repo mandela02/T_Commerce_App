@@ -24,8 +24,10 @@ class ProductViewModel extends ChangeNotifier {
   String _discountPrice = "";
   String _importPrice = "";
 
-  String _barCode = "";
+  String? _barCode;
   String _weight = "";
+  String _quantity = "";
+  String _unit = "";
 
   ProductViewModel({required Product? product, required Category? category}) {
     this._product = product;
@@ -43,6 +45,8 @@ class ProductViewModel extends ChangeNotifier {
           price: notNullProduct.discountPrice == null
               ? ""
               : "${notNullProduct.discountPrice}");
+      setQuantity(quantity: "${notNullProduct.quantity}");
+      setUnit(unit: notNullProduct.unit);
     }
     getImages();
   }
@@ -55,19 +59,22 @@ class ProductViewModel extends ChangeNotifier {
           .map((e) => ImageObject(memory: e.memoryImage, asset: e.assetImage))
           .toList();
       final selected = dataImages.firstWhere((element) => element.isAvatar);
-      _images = imageList;
-      _selectedImage = imageList
-          .where((element) =>
-              element.asset == selected.assetImage &&
-              element.memory == selected.memoryImage)
-          .toList()
-          .first;
+      setListImages(images: imageList);
 
-      _assets = imageList
-          .map((e) => e.asset)
-          .where((element) => element != null)
-          .map((e) => e!)
-          .toList();
+      setSelectedImage(
+          image: imageList
+              .where((element) =>
+                  element.asset == selected.assetImage &&
+                  element.memory == selected.memoryImage)
+              .toList()
+              .first);
+
+      setAssets(
+          images: imageList
+              .map((e) => e.asset)
+              .where((element) => element != null)
+              .map((e) => e!)
+              .toList());
       change();
     }
   }
@@ -88,14 +95,18 @@ extension ProductViewModelGetter on ProductViewModel {
   String get description => _description;
   String get sellPrice => _sellPrice;
   String get discountPrice => _discountPrice;
-  String get barCode => _barCode;
+  String? get barCode => _barCode;
   String get appBarTitle => _product == null ? "New product" : _product!.name;
   String get buttonTitle => _product == null ? "Create" : "Update";
   bool get isSaveButtonEnable =>
       _name.isNotEmpty &&
       _selectedCategory != null &&
       _sellPrice.isNotEmpty &&
-      _selectedImage != null;
+      _selectedImage != null &&
+      _quantity.isNotEmpty &&
+      _unit.isNotEmpty &&
+      _importPrice.isNotEmpty &&
+      _weight.isNotEmpty;
   bool get isDeleteButtonVisible => _product != null;
   List<Category> get categories => _categories;
   Category? get selectedCategory => _selectedCategory;
@@ -104,6 +115,8 @@ extension ProductViewModelGetter on ProductViewModel {
   List<Asset> get assets => _assets;
   String get weight => _weight;
   String get importPrice => _importPrice;
+  String get quantity => _quantity;
+  String get unit => _unit;
 }
 
 extension ProductViewModelSetter on ProductViewModel {
@@ -112,7 +125,7 @@ extension ProductViewModelSetter on ProductViewModel {
     change();
   }
 
-  void setBarCode({required String barCode}) {
+  void setBarCode({required String? barCode}) {
     _barCode = barCode;
   }
 
@@ -159,6 +172,17 @@ extension ProductViewModelSetter on ProductViewModel {
 
   void setWeight({required String weight}) {
     _weight = weight;
+    change();
+  }
+
+  void setQuantity({required String quantity}) {
+    _quantity = quantity;
+    change();
+  }
+
+  void setUnit({required String unit}) {
+    _unit = unit;
+    change();
   }
 }
 
@@ -166,9 +190,9 @@ extension ProductViewModelFunction on ProductViewModel {
   void _updateSelectedImage() {
     if (images.isNotEmpty &&
         (selectedImage == null || !images.contains(selectedImage))) {
-      _selectedImage = images.first;
+      setSelectedImage(image: images.first);
     } else if (images.isEmpty) {
-      _selectedImage = null;
+      setSelectedImage(image: null);
     }
   }
 
@@ -200,58 +224,67 @@ extension ProductViewModelFunction on ProductViewModel {
     int? discountPrice;
     int importPrice;
     int weight;
+    int quantity;
 
     try {
-      sellPrice = int.parse(_sellPrice);
-      discountPrice = int.parse(_discountPrice);
-      importPrice = int.parse(_importPrice);
-      weight = int.parse(_weight);
+      sellPrice = int.parse(this.sellPrice);
+      discountPrice = int.parse(this.discountPrice);
+      importPrice = int.parse(this.importPrice);
+      weight = int.parse(this.weight);
+      quantity = int.parse(this.quantity);
     } catch (e) {
       sellPrice = 999999;
       discountPrice = null;
       importPrice = 999999;
       weight = 999;
+      quantity = 1;
     }
 
     if (_product == null) {
       final Product product = Product.create(
-          name: _name,
+          name: this.name,
           sellPrice: sellPrice,
           discountPrice: discountPrice,
           importPrice: importPrice,
           createDate: now,
           updateDate: now,
-          barCode: _barCode,
-          description: _description,
-          weight: weight);
-      if (_selectedCategory != null && _selectedImage != null) {
+          barCode:
+              this.barCode == null || this.barCode == "" ? null : this.barCode,
+          description: this.description,
+          weight: weight,
+          quantity: quantity,
+          unit: this.unit);
+      if (this.selectedCategory != null && this.selectedImage != null) {
         await _useCase.save(
             product: product,
-            category: _selectedCategory!,
-            avatar: _selectedImage!,
-            images: _images);
+            category: this.selectedCategory!,
+            avatar: this.selectedImage!,
+            images: this.images);
         Navigator.pop(context);
       }
     } else {
       Product existProduct = _product!;
       final Product product = Product(
           id: existProduct.id,
-          name: _name,
+          name: this.name,
           sellPrice: sellPrice,
           discountPrice: discountPrice,
           importPrice: importPrice,
           createDate: existProduct.createDate,
           updateDate: now,
-          barCode: _barCode,
-          description: _description,
-          weight: weight);
+          barCode:
+              this.barCode == null || this.barCode == "" ? null : this.barCode,
+          description: this.description,
+          weight: weight,
+          quantity: quantity,
+          unit: this.unit);
 
-      if (_selectedCategory != null && _selectedImage != null) {
+      if (this.selectedCategory != null && this.selectedImage != null) {
         await _useCase.update(
             product: product,
-            category: _selectedCategory!,
-            avatar: _selectedImage!,
-            images: _images);
+            category: this.selectedCategory!,
+            avatar: this.selectedImage!,
+            images: this.images);
         Navigator.pop(context);
       }
     }
@@ -263,9 +296,9 @@ extension ProductViewModelFunction on ProductViewModel {
     int? discountPrice;
 
     try {
-      sellPrice = int.parse(_sellPrice);
-      importPrice = int.parse(_importPrice);
-      discountPrice = int.parse(_discountPrice);
+      sellPrice = int.parse(this.sellPrice);
+      importPrice = int.parse(this.importPrice);
+      discountPrice = int.parse(this.discountPrice);
     } catch (e) {
       sellPrice = 999999;
       importPrice = 999999;

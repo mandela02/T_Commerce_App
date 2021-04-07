@@ -27,7 +27,16 @@ class ProductCardWidget extends StatelessWidget {
       child: ListTile(
         onTap: () => onCellTap(),
         title: Text(product.name),
-        subtitle: Text(category.categoryName),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+                "SKU: ${product.barCode == null ? "Not set" : product.barCode}"),
+            Text(product.quantity == 0
+                ? "Sold out"
+                : "Inventory: ${product.quantity} ${product.unit}")
+          ],
+        ),
         leading: Container(
           height: 40,
           width: 40,
