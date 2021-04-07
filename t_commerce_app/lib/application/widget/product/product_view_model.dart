@@ -56,8 +56,13 @@ class ProductViewModel extends ChangeNotifier {
           .toList();
       final selected = dataImages.firstWhere((element) => element.isAvatar);
       _images = imageList;
-      _selectedImage =
-          ImageObject(memory: selected.memoryImage, asset: selected.assetImage);
+      _selectedImage = imageList
+          .where((element) =>
+              element.asset == selected.assetImage &&
+              element.memory == selected.memoryImage)
+          .toList()
+          .first;
+
       _assets = imageList
           .map((e) => e.asset)
           .where((element) => element != null)
@@ -225,6 +230,7 @@ extension ProductViewModelFunction on ProductViewModel {
             category: _selectedCategory!,
             avatar: _selectedImage!,
             images: _images);
+        Navigator.pop(context);
       }
     } else {
       Product existProduct = _product!;
@@ -246,11 +252,9 @@ extension ProductViewModelFunction on ProductViewModel {
             category: _selectedCategory!,
             avatar: _selectedImage!,
             images: _images);
-        print(product);
-        print("update");
+        Navigator.pop(context);
       }
     }
-    Navigator.pop(context);
   }
 
   String calculateRevenue() {

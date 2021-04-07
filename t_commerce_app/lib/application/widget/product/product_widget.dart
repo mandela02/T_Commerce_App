@@ -85,6 +85,8 @@ class _ProductWidgetState extends State<ProductWidget> {
                   children: [
                     _imagesWidget,
                     SizedBox(height: 10),
+                    _categoryPickerWidget,
+                    SizedBox(height: 10),
                     _generalInformationWidget,
                     SizedBox(height: 10),
                     _allPriceWidget,
@@ -120,22 +122,16 @@ class _ProductWidgetState extends State<ProductWidget> {
 
 extension ProductWidgetComputedPropeties on _ProductWidgetState {
   Widget get _generalInformationWidget {
-    return Card(
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _nameWidget,
-            SizedBox(height: 20),
-            _categoryPicker,
-            SizedBox(height: 20),
-            _barCodeWidget,
-            SizedBox(height: 20),
-            _descriptionWidget,
-          ],
-        ),
+    return PaddingCardWidget(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _nameWidget,
+          SizedBox(height: 20),
+          _barCodeWidget,
+          SizedBox(height: 20),
+          _descriptionWidget,
+        ],
       ),
     );
   }
@@ -164,7 +160,7 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
         isMultiLine: true,
         size: _commonFontSize,
         controller: _descriptionTextController,
-        keyboard: TextInputType.text,
+        keyboard: TextInputType.multiline,
         onTextChange: (description) =>
             viewModel.setDescription(description: description),
       ),
@@ -172,20 +168,16 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
   }
 
   Widget get _allPriceWidget {
-    return Card(
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _sellPriceWidget,
-            SizedBox(
-              height: 20,
-            ),
-            _importPriceWidget,
-          ],
-        ),
+    return PaddingCardWidget(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _sellPriceWidget,
+          SizedBox(
+            height: 20,
+          ),
+          _importPriceWidget,
+        ],
       ),
     );
   }
@@ -248,7 +240,7 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
             flex: 1,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   "Revenue",
@@ -259,10 +251,17 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
                 SizedBox(
                   height: 10,
                 ),
-                Text(
-                  viewModel.calculateRevenue(),
-                  style: TextStyle(
-                    fontSize: _commonFontSize,
+                Container(
+                  height: 40,
+                  child: Row(
+                    children: [
+                      Text(
+                        viewModel.calculateRevenue(),
+                        style: TextStyle(
+                          fontSize: _commonFontSize,
+                        ),
+                      ),
+                    ],
                   ),
                 )
               ],
@@ -307,15 +306,11 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
   }
 
   Widget get _sizeWidget {
-    return Card(
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            _weightWidget,
-          ],
-        ),
+    return PaddingCardWidget(
+      child: Column(
+        children: [
+          _weightWidget,
+        ],
       ),
     );
   }
@@ -335,49 +330,51 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
     );
   }
 
-  Widget get _categoryPicker {
-    return Consumer<ProductViewModel>(
-      builder: (context, viewModel, child) => Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Category",
-                  style: TextStyle(
-                    fontSize: _commonFontSize,
-                  ),
-                ),
-                SizedBox(height: 8),
-                GestureDetector(
-                  onTap: _showCategoryActionSheet,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      viewModel.selectedCategory == null
-                          ? "Choose a category"
-                          : viewModel.selectedCategory!.categoryName,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.blue),
+  Widget get _categoryPickerWidget {
+    return PaddingCardWidget(
+      child: Consumer<ProductViewModel>(
+        builder: (context, viewModel, child) => Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Category",
+                    style: TextStyle(
+                      fontSize: _commonFontSize,
                     ),
                   ),
-                )
-              ],
+                  SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: _showCategoryActionSheet,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        viewModel.selectedCategory == null
+                            ? "Choose a category"
+                            : viewModel.selectedCategory!.categoryName,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.blue),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-          RoundIconButtonWidget(
-            width: 65,
-            height: 65,
-            cornerRadius: Radius.circular(10),
-            tintColor: Colors.white,
-            backgroundColor: Colors.blue,
-            icon: Icons.category_outlined,
-            onButtonTap: _createNewCategory,
-          ),
-        ],
+            RoundIconButtonWidget(
+              width: 65,
+              height: 65,
+              cornerRadius: Radius.circular(10),
+              tintColor: Colors.white,
+              backgroundColor: Colors.blue,
+              icon: Icons.post_add_outlined,
+              onButtonTap: _createNewCategory,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -597,5 +594,22 @@ extension ProductWidgetFunction on _ProductWidgetState {
         await viewModel.delete(context);
       }
     }
+  }
+}
+
+class PaddingCardWidget extends StatelessWidget {
+  final Widget child;
+
+  const PaddingCardWidget({Key? key, required this.child}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: child,
+      ),
+    );
   }
 }
