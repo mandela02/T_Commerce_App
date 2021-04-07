@@ -266,7 +266,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
 
     if (pop != null) {
       AlertResult result = pop as AlertResult;
-      if (pop == AlertResult.success) {
+      if (result == AlertResult.success) {
         onAgreeDelete();
       }
     }
