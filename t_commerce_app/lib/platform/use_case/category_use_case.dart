@@ -55,11 +55,12 @@ class CategoryUseCase implements CategoryUseCaseType {
             .toList();
         if (avatars.isNotEmpty) {
           return ProductAndCategory(
-              product: product,
-              category: category,
-              avatar: ImageObject(
-                  memory: avatars.first.memoryImage,
-                  asset: avatars.first.assetImage));
+            product: product,
+            category: category,
+            avatar: ImageObject(
+                memory: avatars.first.memoryImage,
+                asset: avatars.first.assetImage),
+          );
         } else {
           return null;
         }

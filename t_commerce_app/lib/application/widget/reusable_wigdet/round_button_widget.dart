@@ -27,6 +27,9 @@ class RoundButtonWidget extends StatelessWidget {
         ),
       ),
       style: ButtonStyle(
+        overlayColor: MaterialStateProperty.all<Color>(
+          Colors.transparent,
+        ),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(1000.0),

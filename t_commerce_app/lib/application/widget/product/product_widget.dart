@@ -9,6 +9,7 @@ import 'package:t_commerce_app/application/widget/product/product_view_model.dar
 import 'package:t_commerce_app/application/widget/reusable_wigdet/alert_dialog.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/delete_button_widget.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/intput_text_field_widget.dart';
+import 'package:t_commerce_app/application/widget/reusable_wigdet/padding_card_widget.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/round_button_widget.dart';
 import 'package:t_commerce_app/application/widget/reusable_wigdet/round_icon_button_widget.dart';
 import 'package:t_commerce_app/domain/model/category.dart';
@@ -75,7 +76,7 @@ class _ProductWidgetState extends State<ProductWidget> {
         title: Text(viewModel.appBarTitle),
         actions: viewModel.isDeleteButtonVisible
             ? [
-                DeleteButtonWidget(onClick: () => _delete()),
+                DeleteButtonWidget(onClick: () => _deleteThisProduct()),
               ]
             : [],
       ),
@@ -327,7 +328,7 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
   Widget get _weightWidget {
     return Consumer<ProductViewModel>(
       builder: (context, viewModel, child) => InputTextFieldWidget(
-        title: "Weight (g)",
+        title: "Weight * (g)",
         placeholder: "Enter production weight",
         height: 40,
         isMultiLine: false,
@@ -349,7 +350,7 @@ extension ProductWidgetComputedPropeties on _ProductWidgetState {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Category",
+                    "Category *",
                     style: TextStyle(
                       fontSize: _commonFontSize,
                     ),
@@ -499,8 +500,6 @@ extension ProductWidgetFunction on _ProductWidgetState {
     if (!mounted) return;
 
     viewModel.setBarCode(barCode: barcodeScanRes);
-    setStateIfNeeded(
-        () => _barCodeTextController.text = viewModel.barCode ?? "");
   }
 
   void _showCategoryActionSheet() async {
@@ -555,41 +554,64 @@ extension ProductWidgetFunction on _ProductWidgetState {
       required double imageSize}) {
     final viewModel = context.watch<ProductViewModel>();
 
-    return GestureDetector(
-      onTap: () {
-        if (viewModel.images.isNotEmpty) {
-          viewModel.setSelectedImage(image: image);
-        }
-      },
-      child: Container(
-        padding: EdgeInsets.all(2),
-        margin: EdgeInsets.all(10),
-        width: imageSize,
-        height: imageSize,
-        decoration: BoxDecoration(
-          color:
-              viewModel.selectedImage == image && isInList ? Colors.red : null,
-          borderRadius: BorderRadius.all(
-            Radius.circular(10.0),
-          ),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10.0),
-          ),
-          child: image == null
-              ? Container(
-                  color: Colors.grey[200],
-                  child: Icon(
-                    Icons.camera_alt_outlined,
+    return Stack(
+      alignment: Alignment.topRight,
+      children: [
+            GestureDetector(
+              onTap: () {
+                if (viewModel.images.isNotEmpty) {
+                  viewModel.setSelectedImage(image: image);
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.all(2),
+                margin: EdgeInsets.all(10),
+                width: imageSize,
+                height: imageSize,
+                decoration: BoxDecoration(
+                  color: viewModel.selectedImage == image && isInList
+                      ? Colors.red
+                      : null,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10.0),
                   ),
-                )
-              : Image(
-                  fit: BoxFit.cover,
-                  image: MemoryImage(image.memory),
                 ),
-        ),
-      ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10.0),
+                  ),
+                  child: image == null
+                      ? Container(
+                          color: Colors.grey[200],
+                          child: Icon(
+                            Icons.camera_alt_outlined,
+                          ),
+                        )
+                      : Image(
+                          fit: BoxFit.cover,
+                          image: MemoryImage(image.memory),
+                        ),
+                ),
+              ),
+            ),
+          ] +
+          (isInList
+              ? [
+                  GestureDetector(
+                    onTap: () => image == null ? null : _deleteAnImage(image),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child: Icon(
+                        Icons.cancel,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ]
+              : []),
     );
   }
 
@@ -621,7 +643,7 @@ extension ProductWidgetFunction on _ProductWidgetState {
     }
   }
 
-  Future<void> _delete() async {
+  Future<void> _deleteThisProduct() async {
     final viewModel = context.read<ProductViewModel>();
     dynamic pop = await showDialog(
       context: this.context,
@@ -643,21 +665,27 @@ extension ProductWidgetFunction on _ProductWidgetState {
       }
     }
   }
-}
 
-class PaddingCardWidget extends StatelessWidget {
-  final Widget child;
-
-  const PaddingCardWidget({Key? key, required this.child}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: child,
-      ),
+  Future<void> _deleteAnImage(ImageObject object) async {
+    final viewModel = context.read<ProductViewModel>();
+    dynamic pop = await showDialog(
+      context: this.context,
+      builder: (context) {
+        return CustomAlertDialog(
+          title: "Delete this image?",
+          content:
+              "Are you sure that you want to delete this image?\nThis action can not be reverse!",
+          successButtonTitle: "Delete",
+          cancelButtonTitle: "Cancel",
+        );
+      },
     );
+
+    if (pop != null) {
+      AlertResult result = pop as AlertResult;
+      if (result == AlertResult.success) {
+        viewModel.removeImage(object);
+      }
+    }
   }
 }

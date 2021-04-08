@@ -59,6 +59,13 @@ class ProductViewModel extends ChangeNotifier {
           .map((e) => ImageObject(memory: e.memoryImage, asset: e.assetImage))
           .toList();
       final selected = dataImages.firstWhere((element) => element.isAvatar);
+
+      _assets = imageList
+          .map((e) => e.asset)
+          .where((element) => element != null)
+          .map((e) => e!)
+          .toList();
+
       setListImages(images: imageList);
 
       setSelectedImage(
@@ -69,12 +76,6 @@ class ProductViewModel extends ChangeNotifier {
               .toList()
               .first);
 
-      setAssets(
-          images: imageList
-              .map((e) => e.asset)
-              .where((element) => element != null)
-              .map((e) => e!)
-              .toList());
       change();
     }
   }
@@ -127,6 +128,7 @@ extension ProductViewModelSetter on ProductViewModel {
 
   void setBarCode({required String? barCode}) {
     _barCode = barCode;
+    change();
   }
 
   void setDiscountPrice({required String price}) {
@@ -308,5 +310,15 @@ extension ProductViewModelFunction on ProductViewModel {
     return discountPrice == null
         ? "${sellPrice - importPrice}"
         : "${discountPrice - importPrice}";
+  }
+
+  void removeImage(ImageObject object) {
+    _images.removeWhere((element) => element == object);
+    if (object.asset != null) {
+      _assets.removeWhere(
+          (element) => element.identifier == object.asset!.identifier);
+    }
+    _updateSelectedImage();
+    change();
   }
 }
