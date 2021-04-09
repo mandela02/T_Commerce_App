@@ -3,30 +3,35 @@ import 'package:flutter/material.dart';
 
 class InputTextFieldWidget extends StatelessWidget {
   final String title;
-  final String placeholder;
+  final String? placeholder;
 
   final double height;
   final bool isMultiLine;
   final double size;
   final TextEditingController? controller;
-  final TextInputType keyboard;
+  final TextInputType? keyboard;
   final Function(String) onTextChange;
+  final MainAxisAlignment? mainAxisAlignment;
 
   const InputTextFieldWidget(
       {Key? key,
       required this.title,
-      required this.placeholder,
+      this.placeholder,
       required this.height,
       required this.isMultiLine,
       required this.size,
-      required this.controller,
-      required this.keyboard,
-      required this.onTextChange})
+      this.controller,
+      this.keyboard,
+      required this.onTextChange,
+      this.mainAxisAlignment})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: mainAxisAlignment == null
+          ? MainAxisAlignment.start
+          : mainAxisAlignment!,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
